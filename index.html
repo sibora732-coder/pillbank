@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PillBank: Копилка для моей любимой кошечки</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f0f8ff; text-align: center; padding: 20px; }
+        h1 { color: #ff69b4; } /* Розовый для милоты */
+        button { background: #4caf50; color: white; padding: 10px 20px; margin: 10px; border: none; cursor: pointer; }
+        button:hover { background: #45a049; }
+        #walletInfo { font-size: 18px; margin: 20px; }
+        .pill { font-size: 24px; color: #ff4500; } /* Иконка пилюли */
+        .cat { font-size: 50px; } /* Котик */
+        footer { font-size: 10px; color: #666; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>🐱 PillBank: Копилка для моей любимой кошечки! 💊</h1>
+    <p>Минти, стейкай и храни пилюли (токены YARA) в своей копилке. Всё на OP_NET!</p>
+    
+    <div class="cat">🐾</div>
+    
+    <button id="connectWallet">Connect OP Wallet</button>
+    <button id="mintYara">Mint YARA (Добавить пилюли)</button>
+    <button id="stakeYara">Stake YARA (Спрятать в копилку)</button>
+    <button id="viewWallet">View Wallet</button>
+    
+    <div id="walletInfo"></div>
+    
+    <footer>
+        <a href="deploy-opnet.md" target="_blank">Деплой на OP_NET</a> | 
+        <a href="README.md" target="_blank">Документация</a>
+    </footer>
+
+    <script>
+        const walletInfo = document.getElementById('walletInfo');
+
+        // Connect Wallet
+        document.getElementById('connectWallet').addEventListener('click', async () => {
+            if (window.opwallet) {
+                try {
+                    await window.opwallet.enable();
+                    walletInfo.innerHTML = 'Wallet connected: ' + window.opwallet.selectedAddress;
+                } catch (error) {
+                    walletInfo.innerHTML = 'Error: ' + error.message;
+                }
+            } else {
+                walletInfo.innerHTML = 'OP Wallet not installed!';
+            }
+        });
+
+        // Mint YARA
+        document.getElementById('mintYara').addEventListener('click', async () => {
+            const tx = { to: 'bc1p...yara-contract-address', data: 'mint(100)', value: '0' }; // Пример данных
+            try {
+                const result = await window.opwallet.sendTransaction(tx);
+                walletInfo.innerHTML = '<span class="pill">💊</span> Minted 100 YARA! Tx: ' + result;
+            } catch (error) {
+                walletInfo.innerHTML = 'Mint failed: ' + error.message;
+            }
+        });
+
+        // Stake YARA
+        document.getElementById('stakeYara').addEventListener('click', async () => {
+            const tx = { to: 'bc1p...stake-contract-address', data: 'stake(50)', value: '0' }; // Пример данных
+            try {
+                const result = await window.opwallet.sendTransaction(tx);
+                walletInfo.innerHTML = '<span class="pill">💊</span> Staked 50 YARA! Tx: ' + result;
+            } catch (error) {
+                walletInfo.innerHTML = 'Stake failed: ' + error.message;
+            }
+        });
+
+        // View Wallet (показ баланса)
+        document.getElementById('viewWallet').addEventListener('click', async () => {
+            try {
+                const balance = await window.opwallet.getBalance(); // Пример API
+                walletInfo.innerHTML = 'BTC: ' + balance.btc + ' | YARA: <span class="pill">💊</span> ' + balance.yara;
+            } catch (error) {
+                walletInfo.innerHTML = 'View failed: ' + error.message;
+            }
+        });
+    </script>
+</body>
+</html>
