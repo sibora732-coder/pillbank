@@ -15,6 +15,6 @@ A DeFi app on OP_NET for minting, staking, and storing YARA tokens as "pills" fo
 4. Deploy the contract: see `deploy-opnet.md`.
 
 ## Screenshots
+![My favorite kitty](kitti%20YARA.jpg) 
 ![PillBank UI](screenshot.png)
-![My favorite kitty](kitti%20YARA.jpg)
 #opnetvibecode @opnetbtc
