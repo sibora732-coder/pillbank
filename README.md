@@ -16,5 +16,5 @@ A DeFi app on OP_NET for minting, staking, and storing YARA tokens as "pills" fo
 
 ## Screenshots
 ![My favorite kitty](kitti%20YARA.jpg) 
-![PillBank UI](screenshot.png)
+![App Interface](app-screenshot.png)
 #opnetvibecode @opnetbtc
