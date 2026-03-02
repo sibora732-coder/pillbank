@@ -17,4 +17,5 @@ A DeFi app on OP_NET for minting, staking, and storing YARA tokens as "pills" fo
 ## Screenshots
 (Add your screenshots here: OP Wallet with YARA, interface with buttons.)
 
+![My favorite kitty](kitti%20YARA.jpg)
 #opnetvibecode @opnetbtc
