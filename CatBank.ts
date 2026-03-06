@@ -1,114 +1,131 @@
-/* Front-end logic for OP_NET testnet demo app: YARA token mint.
- * NOTE: Replace the placeholders below with your actual addresses.
- * All labels/messages are in English to pass review.
- */
+// CatBank.js — OP/Bitcoin Testnet
 
-declare global {
-  interface Window {
-    opWallet?: any; // OP Wallet provider injected into the page
-  }
+const CONFIG = {
+  NETWORK: 'testnet3',
+  TOKEN_ADDRESS: 'opt1...YOUR_TOKEN_ADDRESS_HERE',
+  FARM_ADDRESS:  'opt1...YOUR_FARM_ADDRESS_HERE',
+  OWNER_ADDRESS: 'opt1...YOUR_WALLET_ADDRESS_HERE'
+};
+
+const $ = (id) => document.getElementById(id);
+const setText = (id, text) => { const el = $(id); if (el) el.textContent = text; };
+const disable = (id, v = true) => { const el = $(id); if (el) el.disabled = v; };
+
+const state = {
+  address: null,
+  network: null
+};
+
+function getProvider() {
+  if (window.opwallet) return window.opwallet;
+  if (window.unisat) return window.unisat;
+  if (window.bitcoin) return window.bitcoin;
+  return null;
 }
 
-// ======== CONFIG ========
-const TOKEN_ADDRESS = "0x403925f98169763bd2dd78b73cdc20421a4b2df7fa3ea171abba278dce2458ca"; // <-- replace with your YARA token address (OP_NET format: starts with opt1)
-const DEPLOYER_ADDRESS = "opt1pcx4nk6acad6z43qt0fh5t7lcdt65yp2uh3mcvzc3h0vxkurkhkus8l8q8m"; // <-- replace with your wallet address
-const DECIMALS = 18;
-
-// ======== HELPERS ========
-const toUnits = (amount: number) => BigInt(Math.floor(amount * 10 ** DECIMALS));
-const fromUnits = (raw: bigint) => Number(raw) / 10 ** DECIMALS;
-const sel = (id: string) => document.getElementById(id)!;
-
-function ensureWallet() {
-  if (!window.opWallet) {
-    alert("OP Wallet not detected. Please install OP Wallet.");
-    throw new Error("OP Wallet not found");
-  }
-}
-
-async function getConnectedAddress(): Promise<string | null> {
-  ensureWallet();
-  try {
-    const accounts = await window.opWallet.requestAccounts?.();
-    if (accounts && accounts.length > 0) return accounts[0];
-    return null;
-  } catch {
-    return null;
-  }
-}
-
-async function connectWallet(): Promise<string> {
-  ensureWallet();
-  const accounts = await window.opWallet.requestAccounts?.();
-  if (!accounts || accounts.length === 0) {
-    throw new Error("No accounts returned by OP Wallet");
-  }
-  return accounts[0];
-}
-
-async function getTbtcBalance(addr: string): Promise<number> {
-  ensureWallet();
-  // Get test BTC balance in sats, convert to BTC
-  const sats = await window.opWallet.getBalance?.(addr);
-  const btc = typeof sats === "number" ? sats / 1e8 : (Number(sats) / 1e8);
-  return Number.isFinite(btc) ? btc : 0;
-}
-
-async function getContract(address: string): Promise<any> {
-  ensureWallet();
-  const c = await window.opWallet.getContract?.(address);
-  if (!c) throw new Error(`Contract not found for ${address}`);
-  return c;
-}
-
-// ======== UI BINDINGS ========
-async function refreshAll() {
-  const addr = sel("walletAddress").textContent || "";
-  if (!addr || addr === "Not connected") return;
-
-  try {
-    // Update tBTC balance
-    const tbtc = await getTbtcBalance(addr);
-    sel("btcBalance").textContent = tbtc.toFixed(4);
-  } catch (e) {
-    console.warn("Failed to read tBTC balance:", e);
-  }
-
-  try {
-    // Update YARA token balance
-    const token = await getContract(TOKEN_ADDRESS);
-    const balRaw = await token.balanceOf?.(addr);
-    const bal = fromUnits(BigInt(balRaw ?? 0));
-    sel("yaraBalance").textContent = bal.toFixed(2);
-  } catch (e) {
-    console.warn("Failed to read YARA balance:", e);
-    sel("yaraBalance").textContent = "0.00";
-  }
-}
-
-async function onConnect() {
-  try {
-    const addr = await connectWallet();
-    sel("walletAddress").textContent = addr;
-    await refreshAll();
-  } catch (e: any) {
-    alert(`Failed to connect wallet: ${e?.message ?? e}`);
-  }
-}
-
-async function onMint() {
-  const currentAddr = sel("walletAddress").textContent || "";
-  if (!currentAddr || currentAddr === "Not connected") {
-    alert("Please connect OP Wallet first.");
+async function connectWallet() {
+  const provider = getProvider();
+  if (!provider) {
+    alert("OP Wallet provider not found. Install the extension.");
     return;
   }
-  if (!DEPLOYER_ADDRESS || DEPLOYER_ADDRESS.length < 10) {
-    alert("DEPLOYER_ADDRESS not set. Update config in CatBank.ts.");
-    return;
-  }
+
   try {
-    const token = await getContract(TOKEN_ADDRESS);
-    const amount = toUnits(10); // Mint 10 YARA
-    const tx = await token.mint?.(currentAddr, amount);
-    if (tx?.wait) await tx.wait();
-    alert("✅ Minted 1
+    let accounts;
+    if (provider.request) {
+      accounts = await provider.request({ method: 'requestAccounts' }).catch(() => {});
+      if (!accounts) accounts = await provider.request({ method: 'wallet_requestAccounts' }).catch(() => {});
+    } 
+    if (!accounts && provider.getAccounts) {
+      accounts = await provider.getAccounts();
+    }
+    if (!accounts && provider.connect) {
+      accounts = await provider.connect();
+      if (accounts.address) accounts = [accounts.address];
+    }
+
+    if (Array.isArray(accounts) && accounts.length > 0) {
+      state.address = accounts[0];
+    } else if (typeof accounts === 'string') {
+      state.address = accounts;
+    }
+
+    if (state.address) {
+      state.network = CONFIG.NETWORK;
+      updateUI();
+      console.log("Connected:", state.address);
+    } else {
+      alert("Failed to get address. Unlock wallet.");
+    }
+  } catch (error) {
+    console.error("Connection error:", error);
+    alert("Connection error: " + error.message);
+  }
+}
+
+async function signAction(actionName, details) {
+  const provider = getProvider();
+  if (!provider) return;
+
+  const message = `${actionName}\nDetails: ${details}\nDate: ${new Date().toISOString()}`;
+  
+  try {
+    let signature;
+    if (provider.signMessage) {
+      signature = await provider.signMessage(message);
+    } else if (provider.request) {
+      signature = await provider.request({ method: 'signMessage', params: [message] });
+    }
+    
+    alert(`Successfully signed! (${actionName})\nThis is demo mode. Real transaction would be sent here.`);
+    console.log("Signature:", signature);
+  } catch (e) {
+    console.error(e);
+    alert("Cancelled or signature error.");
+  }
+}
+
+async function mint() {
+  if (!state.address) return alert("Connect wallet first!");
+  await signAction("MINT YARA", `Mint 10 tokens to ${state.address}`);
+}
+
+async function stake() {
+  if (!state.address) return alert("Connect wallet first!");
+  const amount = $("inpAmount").value;
+  if (!amount || amount <= 0) return alert("Enter amount > 0");
+  await signAction("STAKE", `Stake ${amount} YARA into Farm`);
+}
+
+async function unstake() {
+  if (!state.address) return alert("Connect wallet first!");
+  await signAction("UNSTAKE", `Unstake all from Farm`);
+}
+
+function updateUI() {
+  setText("walletAddress", state.address || "Not connected");
+  setText("netLabel", state.network || "unknown");
+  setText("tokenAddrLabel", CONFIG.TOKEN_ADDRESS);
+  setText("farmAddrLabel", CONFIG.FARM_ADDRESS);
+}
+
+function refresh() {
+  updateUI();
+  console.log("UI Refreshed");
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const btnConnect = $("connectButton");
+  const btnMint = $("mintButton");
+  const btnStake = $("stakeButton");
+  const btnUnstake = $("unstakeButton");
+  const btnRefresh = $("refreshButton");
+
+  if (btnConnect) btnConnect.addEventListener("click", connectWallet);
+  if (btnMint)    btnMint.addEventListener("click", mint);
+  if (btnStake)   btnStake.addEventListener("click", stake);
+  if (btnUnstake) btnUnstake.addEventListener("click", unstake);
+  if (btnRefresh) btnRefresh.addEventListener("click", refresh);
+
+  refresh();
+});
