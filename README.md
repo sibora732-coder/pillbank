@@ -1,20 +1,40 @@
-# PillBank: A Piggy Bank for My Favorite Kitty
+# Pill Bank (YARA) 🐱💊
 
-A DeFi app on OP_NET for minting, staking, and storing YARA tokens as "pills" for my favorite kitty. Everything runs on the Bitcoin testnet with OP Wallet.
+A tiny OP_NET testnet dApp to mint and stake an OP_20 token called YARA (aka "pills" for my cat).  
+Connect OP Wallet, mint demo tokens, and stake them into a simple vault (farm).
 
 ## Features
-- Connect OP Wallet.
-- Mint YARA (add pills).
-- Stake YARA (save to the piggy bank).
-- View Wallet (view balance).
+- Connect OP Wallet (testnet).
+- Mint YARA tokens (owner-only, for demo purposes).
+- Approve + Stake YARA into a farm contract.
+- Unstake and view balances (tBTC, YARA, staked YARA).
 
-## Installation
-1. Install OP Wallet.
-2. Receive test BTC at [faucet.opnet.org](https://faucet.opnet.org).
-3. Open `index.html` in your browser.
-4. Deploy the contract: see `deploy-opnet.md`.
+## Prerequisites
+- OP Wallet installed.
+- Test BTC for gas from the faucet.
 
-## Screenshots
-![My favorite kitty](kitti%20YARA.jpg) 
-![App Interface](app-screenshot.png)
-#opnetvibecode @opnetbtc
+## Quick Start
+1. Clone this repo and open `index.html` in a modern browser.
+2. Build the front-end script from TypeScript to JavaScript:
+   ```bash
+   # If you don't have TypeScript:
+   npm install --global typescript
+   # Compile CatBank.ts -> CatBank.js (outputs in the same folder by default)
+   tsc CatBank.ts --target ES2020 --module ES2020 --outFile CatBank.js
+   ```
+   Alternatively, add a `tsconfig.json` and run `tsc`.
+3. Set your contract addresses in `CatBank.ts`:
+   ```ts
+   const TOKEN_ADDRESS = "opt1..."; // your YARA token
+   const FARM_ADDRESS  = "opt1..."; // your farm (optional initially)
+   const DEPLOYER_ADDRESS = "opt1..."; // the wallet that can mint
+   ```
+4. Open `index.html`, click "Connect Wallet", mint and (once farm is deployed) stake.
+
+## Deploy (testnet)
+- Token and farm deployment steps are documented in `deploy-opnet.md`.
+- You can test minting without a farm. Staking requires a farm address.
+
+## Notes
+- This app is for OP_NET testnet only.
+- UI strings and documentation are in English (required for submission).
