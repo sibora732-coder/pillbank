@@ -26,7 +26,7 @@ Connect OP Wallet, mint demo tokens, and stake them into a simple vault (farm).
 3. Set your contract addresses in `CatBank.ts`:
    ```ts
    const TOKEN_ADDRESS = "0x403925f98169763bd2dd78b73cdc20421a4b2df7fa3ea171abba278dce2458ca"; // your YARA token
-   const FARM_ADDRESS  = "opt1..."; // your farm (optional initially)
+   const FARM_ADDRESS  = "0x756915aae71715090c4c5249d93eebb255820bd37ab754c84686596f6b09092e"; // your farm (optional initially)
    const DEPLOYER_ADDRESS = "opt1..."; // the wallet that can mint
    ```
 4. Open `index.html`, click "Connect Wallet", mint and (once farm is deployed) stake.
