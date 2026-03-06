@@ -1,5 +1,4 @@
-/* CatBank.ts
- * Front-end logic for OP_NET testnet demo app: YARA token mint + simple staking.
+/* Front-end logic for OP_NET testnet demo app: YARA token mint.
  * NOTE: Replace the placeholders below with your actual addresses.
  * All labels/messages are in English to pass review.
  */
@@ -11,9 +10,26 @@ declare global {
 }
 
 // ======== CONFIG ========
-const TOKEN_ADDRESS = "0x403925f98169763bd2dd78b73cdc20421a4b2df7fa3ea171abba278dce2458ca"; // <-- replace with your YARA token address
-const FARM_ADDRESS  = "opt1yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy"; // <-- replace with your farm address (keep as placeholder if not deployed yet)
-const DEPLOYER_ADDRESS = "opt1pcx4nk6acad6z43qt0fh5t7lcdt65yp2uh3mcvzc3h0vxkurkhkus8l8q8m"; // <-- replace with your wallet address (token owner)
+const TOKEN_ADDRESS = "Token
+YARA (YARA)
+Overview
+
+Contract Address:
+0x403925...ce2458ca
+
+
+Name:
+YARA
+
+Symbol:
+YARA
+
+Max Supply:
+100,000,000
+
+Total Supply:
+990,000."; // <-- replace with your YARA token address (OP_NET format: starts with opt1)
+const DEPLOYER_ADDRESS = "opt1pcx4nk6acad6z43qt0fh5t7lcdt65yp2uh3mcvzc3h0vxkurkhkus8l8q8m"; // <-- replace with your wallet address
 const DECIMALS = 18;
 
 // ======== HELPERS ========
@@ -50,8 +66,8 @@ async function connectWallet(): Promise<string> {
 
 async function getTbtcBalance(addr: string): Promise<number> {
   ensureWallet();
-  // Placeholder: actual tBTC balance method may differ depending on OP Wallet API
-  const sats = await window.opWallet.getBalance?.(addr); // returns sats? adjust if needed
+  // Get test BTC balance in sats, convert to BTC
+  const sats = await window.opWallet.getBalance?.(addr);
   const btc = typeof sats === "number" ? sats / 1e8 : (Number(sats) / 1e8);
   return Number.isFinite(btc) ? btc : 0;
 }
@@ -69,7 +85,7 @@ async function refreshAll() {
   if (!addr || addr === "Not connected") return;
 
   try {
-    // tBTC
+    // Update tBTC balance
     const tbtc = await getTbtcBalance(addr);
     sel("btcBalance").textContent = tbtc.toFixed(4);
   } catch (e) {
@@ -77,7 +93,7 @@ async function refreshAll() {
   }
 
   try {
-    // Token balance
+    // Update YARA token balance
     const token = await getContract(TOKEN_ADDRESS);
     const balRaw = await token.balanceOf?.(addr);
     const bal = fromUnits(BigInt(balRaw ?? 0));
@@ -85,17 +101,6 @@ async function refreshAll() {
   } catch (e) {
     console.warn("Failed to read YARA balance:", e);
     sel("yaraBalance").textContent = "0.00";
-  }
-
-  try {
-    // Staked balance
-    const farm = await getContract(FARM_ADDRESS);
-    const stRaw = await farm.stakedBalance?.(addr);
-    const st = fromUnits(BigInt(stRaw ?? 0));
-    sel("stakedBalance").textContent = st.toFixed(2);
-  } catch {
-    // Farm not deployed or unreadable
-    sel("stakedBalance").textContent = "0.00";
   }
 }
 
@@ -121,117 +126,7 @@ async function onMint() {
   }
   try {
     const token = await getContract(TOKEN_ADDRESS);
-
-    // Many OP_20 test tokens implement 'mint(address to, uint256 amount)'
-    // If your token uses a different signature, adjust accordingly.
-    const amount = toUnits(10); // 10 YARA
+    const amount = toUnits(10); // Mint 10 YARA
     const tx = await token.mint?.(currentAddr, amount);
     if (tx?.wait) await tx.wait();
-    alert("✅ Minted 10 YARA.");
-    await refreshAll();
-  } catch (e: any) {
-    alert(`Mint failed: ${e?.message ?? e}`);
-  }
-}
-
-function parseAmount(): bigint | null {
-  const v = (sel("inpAmount") as HTMLInputElement).value.trim();
-  if (!v) return null;
-  const n = Number(v);
-  if (!Number.isFinite(n) || n <= 0) return null;
-  return toUnits(n);
-}
-
-async function onStake() {
-  const currentAddr = sel("walletAddress").textContent || "";
-  if (!currentAddr || currentAddr === "Not connected") {
-    alert("Please connect OP Wallet first.");
-    return;
-  }
-  if (!FARM_ADDRESS || FARM_ADDRESS.includes("yyyy")) {
-    alert("Farm not configured yet. Deploy farm and set FARM_ADDRESS in CatBank.ts.");
-    return;
-  }
-  const amount = parseAmount();
-  if (!amount) {
-    alert("Enter a valid amount.");
-    return;
-  }
-
-  try {
-    const token = await getContract(TOKEN_ADDRESS);
-    const farm  = await getContract(FARM_ADDRESS);
-
-    // Approve farm to spend tokens
-    const approveTx = await token.approve?.(FARM_ADDRESS, amount);
-    if (approveTx?.wait) await approveTx.wait();
-
-    // Stake
-    const tx = await farm.stake?.(amount);
-    if (tx?.wait) await tx.wait();
-
-    alert("✅ Staked successfully.");
-    await refreshAll();
-  } catch (e: any) {
-    alert(`Stake failed: ${e?.message ?? e}`);
-  }
-}
-
-async function onUnstake() {
-  const currentAddr = sel("walletAddress").textContent || "";
-  if (!currentAddr || currentAddr === "Not connected") {
-    alert("Please connect OP Wallet first.");
-    return;
-  }
-  if (!FARM_ADDRESS || FARM_ADDRESS.includes("yyyy")) {
-    alert("Farm not configured yet. Deploy farm and set FARM_ADDRESS in CatBank.ts.");
-    return;
-  }
-  const amount = parseAmount();
-  if (!amount) {
-    alert("Enter a valid amount.");
-    return;
-  }
-
-  try {
-    const farm = await getContract(FARM_ADDRESS);
-    const tx = await farm.unstake?.(amount);
-    if (tx?.wait) await tx.wait();
-
-    alert("✅ Unstaked successfully.");
-    await refreshAll();
-  } catch (e: any) {
-    alert(`Unstake failed: ${e?.message ?? e}`);
-  }
-}
-
-// ======== INIT ========
-function init() {
-  // Labels for addresses
-  sel("tokenAddrLabel").textContent = TOKEN_ADDRESS;
-  sel("farmAddrLabel").textContent = FARM_ADDRESS;
-
-  // Farm notice
-  const notice = sel("farmNotice");
-  if (!FARM_ADDRESS || FARM_ADDRESS.includes("yyyy")) {
-    notice.textContent = "Farm not deployed yet. Stake/Unstake is disabled until you set a valid FARM_ADDRESS.";
-  } else {
-    notice.textContent = "Farm is set. You can stake/unstake YARA tokens.";
-  }
-
-  sel("btnConnect").addEventListener("click", onConnect);
-  sel("btnMint").addEventListener("click", onMint);
-  sel("btnStake").addEventListener("click", onStake);
-  sel("btnUnstake").addEventListener("click", onUnstake);
-
-  // Auto-connect attempt
-  (async () => {
-    const addr = await getConnectedAddress();
-    if (addr) {
-      sel("walletAddress").textContent = addr;
-      await refreshAll();
-    }
-  })();
-}
-
-document.addEventListener("DOMContentLoaded", init);
+    alert("✅ Minted 1
