@@ -1,4 +1,4 @@
-/* Front-end logic for OP_NET testnet demo app: YARA token mint.
+ /* Front-end logic for OP_NET testnet demo app: YARA token mint.
  * NOTE: Replace the placeholders below with your actual addresses.
  * All labels/messages are in English to pass review.
  */
