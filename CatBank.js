@@ -1,124 +1,131 @@
-// ======== CONFIG ========
-const TOKEN_ADDRESS = "0x403925f98169763bd2dd78b73cdc20421a4b2df7fa3ea171abba278dce2458ca";
-const DEPLOYER_ADDRESS = "opt1pcx4nk6acad6z43qt0fh5t7lcdt65yp2uh3mcvzc3h0vxkurkhkus8l8q8m";
-const DECIMALS = 18;
+// CatBank.js — OP/Bitcoin Testnet
 
-// ======== HELPERS ========
-const pow10n = (n) => 10n ** BigInt(n);
+const CONFIG = {
+  NETWORK: 'testnet3',
+  TOKEN_ADDRESS: 'opt1...YOUR_TOKEN_ADDRESS_HERE',
+  FARM_ADDRESS:  'opt1...YOUR_FARM_ADDRESS_HERE',
+  OWNER_ADDRESS: 'opt1...YOUR_WALLET_ADDRESS_HERE'
+};
 
-function toUnits(amount) {
-  // Поддерживаем целые и дробные в простом виде: если передать строку "1.5" — лучше парсить отдельно.
-  const num = Number(amount);
-  if (!Number.isFinite(num)) throw new Error("Invalid amount");
-  // Преобразуем целую часть и дробную (ограниченно):
-  const whole = BigInt(Math.trunc(num));
-  return whole * pow10n(DECIMALS);
-}
+const $ = (id) => document.getElementById(id);
+const setText = (id, text) => { const el = $(id); if (el) el.textContent = text; };
+const disable = (id, v = true) => { const el = $(id); if (el) el.disabled = v; };
 
-function fromUnits(raw) {
-  if (raw === null || raw === undefined) return 0;
-  const v = typeof raw === "bigint" ? raw : BigInt(raw.toString?.() ?? String(raw));
-  return Number(v) / Number(pow10n(DECIMALS));
-}
+const state = {
+  address: null,
+  network: null
+};
 
-function sel(id) {
-  const el = document.getElementById(id);
-  if (!el) throw new Error(`Element with id="${id}" not found`);
-  return el;
-}
-
-function ensureWallet() {
-  if (!window.opWallet) {
-    alert("OP Wallet not detected. Please install OP Wallet.");
-    throw new Error("OP Wallet not found");
-  }
+function getProvider() {
+  if (window.opwallet) return window.opwallet;
+  if (window.unisat) return window.unisat;
+  if (window.bitcoin) return window.bitcoin;
+  return null;
 }
 
 async function connectWallet() {
-  ensureWallet();
-  const accounts = await window.opWallet.requestAccounts?.();
-  if (!accounts || accounts.length === 0) throw new Error("No accounts returned by OP Wallet");
-  return accounts[0];
-}
-
-async function getTbtcBalance(addr) {
-  ensureWallet();
-  const sats = await window.opWallet.getBalance?.(addr);
-  if (sats === null || sats === undefined) return 0;
-  if (typeof sats === "bigint") return Number(sats) / 1e8;
-  if (typeof sats === "string" && /^\d+$/.test(sats)) return Number(BigInt(sats)) / 1e8;
-  const n = Number(sats);
-  return Number.isFinite(n) ? n / 1e8 : 0;
-}
-
-async function getContract(address) {
-  ensureWallet();
-  const c = await window.opWallet.getContract?.(address);
-  if (!c) throw new Error(`Contract not found for ${address}`);
-  return c;
-}
-
-// ======== UI BINDINGS ========
-async function refreshAll() {
-  let addr = "";
-  try { addr = sel("walletAddress").textContent || ""; } catch (e) { return; }
-  if (!addr || addr === "Not connected") return;
-
-  try {
-    const tbtc = await getTbtcBalance(addr);
-    sel("btcBalance").textContent = tbtc.toFixed(4);
-  } catch (e) {
-    console.warn("Failed to read tBTC balance:", e);
+  const provider = getProvider();
+  if (!provider) {
+    alert("OP Wallet provider not found. Install the extension.");
+    return;
   }
 
   try {
-    const token = await getContract(TOKEN_ADDRESS);
-    const balRaw = await token.balanceOf?.(addr);
-    const bal = fromUnits(typeof balRaw === "bigint" ? balRaw : balRaw?.toString?.());
-    sel("yaraBalance").textContent = bal.toFixed(2);
-  } catch (e) {
-    console.warn("Failed to read YARA balance:", e);
-    try { sel("yaraBalance").textContent = "0.00"; } catch {}
+    let accounts;
+    if (provider.request) {
+      accounts = await provider.request({ method: 'requestAccounts' }).catch(() => {});
+      if (!accounts) accounts = await provider.request({ method: 'wallet_requestAccounts' }).catch(() => {});
+    } 
+    if (!accounts && provider.getAccounts) {
+      accounts = await provider.getAccounts();
+    }
+    if (!accounts && provider.connect) {
+      accounts = await provider.connect();
+      if (accounts.address) accounts = [accounts.address];
+    }
+
+    if (Array.isArray(accounts) && accounts.length > 0) {
+      state.address = accounts[0];
+    } else if (typeof accounts === 'string') {
+      state.address = accounts;
+    }
+
+    if (state.address) {
+      state.network = CONFIG.NETWORK;
+      updateUI();
+      console.log("Connected:", state.address);
+    } else {
+      alert("Failed to get address. Unlock wallet.");
+    }
+  } catch (error) {
+    console.error("Connection error:", error);
+    alert("Connection error: " + error.message);
   }
 }
 
-async function onConnect() {
-  try {
-    const addr = await connectWallet();
-    sel("walletAddress").textContent = addr;
-    await refreshAll();
-  } catch (e) {
-    alert(`Failed to connect wallet: ${e?.message ?? e}`);
-  }
-}
+async function signAction(actionName, details) {
+  const provider = getProvider();
+  if (!provider) return;
 
-async function onMint() {
-  let currentAddr = "";
-  try { currentAddr = sel("walletAddress").textContent || ""; } catch (e) { alert("walletAddress element not found"); return; }
-  if (!currentAddr || currentAddr === "Not connected") { alert("Please connect OP Wallet first."); return; }
-  if (!DEPLOYER_ADDRESS || DEPLOYER_ADDRESS.length < 10) { alert("DEPLOYER_ADDRESS not set. Update config."); return; }
-
+  const message = `${actionName}\nDetails: ${details}\nDate: ${new Date().toISOString()}`;
+  
   try {
-    const token = await getContract(TOKEN_ADDRESS);
-    if (!token.mint) { alert("Mint function not available — check contract/network"); return; }
-    const amount = toUnits(10); // Mint 10 YARA
-    const tx = await token.mint?.(currentAddr, amount);
-    if (tx?.wait) await tx.wait();
-    alert("✅ Minted 10 YARA!");
-    await refreshAll();
+    let signature;
+    if (provider.signMessage) {
+      signature = await provider.signMessage(message);
+    } else if (provider.request) {
+      signature = await provider.request({ method: 'signMessage', params: [message] });
+    }
+    
+    alert(`Successfully signed! (${actionName})\nThis is demo mode. Real transaction would be sent here.`);
+    console.log("Signature:", signature);
   } catch (e) {
     console.error(e);
-    alert("Error during minting.");
+    alert("Cancelled or signature error.");
   }
 }
 
-// Привязки кнопок (если они есть в HTML)
+async function mint() {
+  if (!state.address) return alert("Connect wallet first!");
+  await signAction("MINT YARA", `Mint 10 tokens to ${state.address}`);
+}
+
+async function stake() {
+  if (!state.address) return alert("Connect wallet first!");
+  const amount = $("inpAmount").value;
+  if (!amount || amount <= 0) return alert("Enter amount > 0");
+  await signAction("STAKE", `Stake ${amount} YARA into Farm`);
+}
+
+async function unstake() {
+  if (!state.address) return alert("Connect wallet first!");
+  await signAction("UNSTAKE", `Unstake all from Farm`);
+}
+
+function updateUI() {
+  setText("walletAddress", state.address || "Not connected");
+  setText("netLabel", state.network || "unknown");
+  setText("tokenAddrLabel", CONFIG.TOKEN_ADDRESS);
+  setText("farmAddrLabel", CONFIG.FARM_ADDRESS);
+}
+
+function refresh() {
+  updateUI();
+  console.log("UI Refreshed");
+}
+
 document.addEventListener("DOMContentLoaded", () => {
-  try {
-    sel("connectButton").addEventListener("click", onConnect);
-    sel("mintButton").addEventListener("click", onMint);
-    sel("refreshButton").addEventListener("click", refreshAll);
-  } catch (e) {
-    console.warn("Some UI elements are missing; ensure ids exist in HTML", e);
-  }
+  const btnConnect = $("connectButton");
+  const btnMint = $("mintButton");
+  const btnStake = $("stakeButton");
+  const btnUnstake = $("unstakeButton");
+  const btnRefresh = $("refreshButton");
+
+  if (btnConnect) btnConnect.addEventListener("click", connectWallet);
+  if (btnMint)    btnMint.addEventListener("click", mint);
+  if (btnStake)   btnStake.addEventListener("click", stake);
+  if (btnUnstake) btnUnstake.addEventListener("click", unstake);
+  if (btnRefresh) btnRefresh.addEventListener("click", refresh);
+
+  refresh();
 });
