@@ -11,7 +11,7 @@ declare global {
 
 // ======== CONFIG ========
 const TOKEN_ADDRESS = "0x403925f98169763bd2dd78b73cdc20421a4b2df7fa3ea171abba278dce2458ca"; // <-- replace with your YARA token address (OP_NET format: starts with opt1)
-const DEPLOYER_ADDRESS = "0x756915aae71715090c4c5249d93eebb255820bd37ab754c84686596f6b09092e"; // <-- replace with your wallet address
+const DEPLOYER_ADDRESS = "opt1pcx4nk6acad6z43qt0fh5t7lcdt65yp2uh3mcvzc3h0vxkurkhkus8l8q8m"; // <-- replace with your wallet address
 const DECIMALS = 18;
 
 // ======== HELPERS ========
