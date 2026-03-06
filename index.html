@@ -43,6 +43,8 @@
     }
     .small { color: #555; font-size: 0.92em; }
     .notice { color: #8a5a00; background: #fff8e1; padding: 8px 12px; border-radius: 8px; border: 1px dashed #ffc400; }
+    /* Стиль для кнопки Refresh */
+    #refreshButton { background: #f0f0f0; color: #333; border: 1px solid #ccc; }
   </style>
 </head>
 <body>
@@ -53,12 +55,16 @@
     <h2>Connect OP Wallet</h2>
     <div class="row">
       <button id="connectButton">Connect Wallet</button>
+      <!-- Добавлена кнопка Refresh, чтобы скрипт не падал -->
+      <button id="refreshButton">Refresh</button> 
       <span class="label">Address:</span>
       <span id="walletAddress">Not connected</span>
     </div>
     <div class="row" style="margin-top:8px;">
       <span class="label">tBTC:</span>
       <span id="btcBalance">0.0000</span>
+      <span class="label" style="margin-left:10px;">Network:</span>
+      <span id="netLabel">unknown</span>
     </div>
     <p class="small">Make sure you have test BTC for gas (see faucet in README).</p>
   </div>
@@ -78,7 +84,7 @@
 
   <div class="card">
     <h2>Staking Vault</h2>
-    <p class="notice" id="farmNotice"></p>
+    <p class="notice" id="farmNotice">Ready to stake</p>
     <div class="row" style="margin:8px 0;">
       <span class="label">Staked:</span>
       <span id="stakedBalance">0.00</span> <span class="small">YARA</span>
@@ -91,7 +97,7 @@
     <p class="small">Farm address: <code id="farmAddrLabel"></code></p>
   </div>
 
-  <!-- Load compiled JS (see README for build step) -->
+  <!-- Load compiled JS -->
   <script type="module" src="CatBank.js"></script>
 </body>
 </html>
