@@ -10,25 +10,7 @@ declare global {
 }
 
 // ======== CONFIG ========
-const TOKEN_ADDRESS = "Token
-YARA (YARA)
-Overview
-
-Contract Address:
-0x403925...ce2458ca
-
-
-Name:
-YARA
-
-Symbol:
-YARA
-
-Max Supply:
-100,000,000
-
-Total Supply:
-990,000."; // <-- replace with your YARA token address (OP_NET format: starts with opt1)
+const TOKEN_ADDRESS = "opt1pcx4nk6acad6z43qt0fh5t7lcdt65yp2uh3mcvzc3h0vxkurkhkus8l8q8m"; // <-- replace with your YARA token address (OP_NET format: starts with opt1)
 const DEPLOYER_ADDRESS = "opt1pcx4nk6acad6z43qt0fh5t7lcdt65yp2uh3mcvzc3h0vxkurkhkus8l8q8m"; // <-- replace with your wallet address
 const DECIMALS = 18;
 
