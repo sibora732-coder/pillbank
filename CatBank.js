@@ -1,4 +1,4 @@
-// CatBank.js — OP/Bitcoin Testnet
+opt1pcx4nk6acad6z43qt0fh5t7lcdt65yp2uh3mcvzc3h0vxkurkhkus8l8q8m// CatBank.js — OP/Bitcoin Testnet
 
 const CONFIG = {
   NETWORK: 'testnet3',
