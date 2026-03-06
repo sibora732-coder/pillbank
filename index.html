@@ -1,92 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PillBank: A Piggy Bank for My Favorite Kitty</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #f0f8ff; text-align: center; padding: 20px; }
-        h1 { color: #ff69b4; } /* Pink for cuteness */
-        button { background: #4caf50; color: white; padding: 10px 20px; margin: 10px; border: none; cursor: pointer; border-radius: 5px; }
-        button:hover { background: #45a049; }
-        #walletInfo { font-size: 18px; margin: 20px; font-weight: bold; }
-        .pill { font-size: 24px; color: #ff4500; } /* Pill icon */
-        .cat { font-size: 50px; } /* Cat paws */
-        footer { font-size: 12px; color: #666; margin-top: 30px; }
-        footer a { color: #4caf50; text-decoration: none; margin: 0 10px; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pill Bank (YARA) 🐱💊</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f8e8d6;
+    }
+    .card {
+      background: #fff;
+      border: 2px solid #ffd700;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 16px 0;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    h1, h2 { margin: 0 0 12px; }
+    button {
+      background: #ff6b6b;
+      color: #fff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-right: 8px;
+    }
+    button.secondary { background: #4c83ff; }
+    button:disabled { background: #bbb; cursor: not-allowed; }
+    .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .label { font-weight: bold; }
+    .cat-img { width: 240px; display: block; margin: 10px auto 0; border-radius: 10px; }
+    input[type="number"] {
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      width: 160px;
+    }
+    .small { color: #555; font-size: 0.92em; }
+    .notice { color: #8a5a00; background: #fff8e1; padding: 8px 12px; border-radius: 8px; border: 1px dashed #ffc400; }
+  </style>
 </head>
 <body>
-    <h1>🐱 PillBank: A Piggy Bank for My Favorite Kitty! 💊</h1>
-    <p>Mint, stake, and store pills (YARA tokens) in your piggy bank. Powered by OP_NET!</p>
+  <h1>Pill Bank (YARA) 🐱💊</h1>
+  <img class="cat-img" src="kitti YARA.jpg" alt="YARA cat"/>
 
-    <!-- Corrected image path for your GitHub file -->
-    <img src="kitti%20YARA.jpg" alt="My favorite kitty" style="width:250px; border-radius:15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-    
-    <div class="cat">🐾</div>
-    
-    <div>
-        <button id="connectWallet">Connect OP Wallet</button>
-        <button id="mintYara">Mint YARA (Add Pills)</button>
-        <button id="stakeYara">Stake YARA (Save to Bank)</button>
-        <button id="viewWallet">View Wallet</button>
+  <div class="card" id="walletCard">
+    <h2>Connect OP Wallet</h2>
+    <div class="row">
+      <button id="btnConnect">Connect Wallet</button>
+      <span class="label">Address:</span>
+      <span id="walletAddress">Not connected</span>
     </div>
-    
-    <div id="walletInfo">Please connect your wallet...</div>
-    
-    <footer>
-        <a href="deploy-opnet.md" target="_blank">Deploy on OP_NET</a> | 
-        <a href="README.md" target="_blank">Documentation</a>
-    </footer>
+    <div class="row" style="margin-top:8px;">
+      <span class="label">tBTC:</span>
+      <span id="btcBalance">0.0000</span>
+    </div>
+    <p class="small">Make sure you have test BTC for gas (see faucet in README).</p>
+  </div>
 
-    <script>
-        const walletInfo = document.getElementById('walletInfo');
+  <div class="card">
+    <h2>YARA Token (Pills)</h2>
+    <div class="row">
+      <span class="label">Balance:</span>
+      <span id="yaraBalance">0.00</span> <span class="small">YARA</span>
+    </div>
+    <div class="row" style="margin-top:8px;">
+      <button id="btnMint" class="secondary">Mint 10 YARA</button>
+      <span class="small">Owner-only mint (for testnet demos)</span>
+    </div>
+    <p class="small">Token address: <code id="tokenAddrLabel"></code></p>
+  </div>
 
-        // Connect Wallet logic
-        document.getElementById('connectWallet').addEventListener('click', async () => {
-            if (window.opwallet) {
-                try {
-                    await window.opwallet.enable();
-                    walletInfo.innerHTML = 'Wallet connected: ' + window.opwallet.selectedAddress;
-                } catch (error) {
-                    walletInfo.innerHTML = 'Error: ' + error.message;
-                }
-            } else {
-                walletInfo.innerHTML = 'OP Wallet not installed!';
-            }
-        });
+  <div class="card">
+    <h2>Staking Vault</h2>
+    <p class="notice" id="farmNotice"></p>
+    <div class="row" style="margin:8px 0;">
+      <span class="label">Staked:</span>
+      <span id="stakedBalance">0.00</span> <span class="small">YARA</span>
+    </div>
+    <div class="row">
+      <input type="number" id="inpAmount" min="0" step="0.0001" placeholder="Amount"/>
+      <button id="btnStake">Stake</button>
+      <button id="btnUnstake">Unstake</button>
+    </div>
+    <p class="small">Farm address: <code id="farmAddrLabel"></code></p>
+  </div>
 
-        // Mint YARA logic
-        document.getElementById('mintYara').addEventListener('click', async () => {
-            const tx = { to: 'bc1p...yara-contract-address', data: 'mint(100)', value: '0' };
-            try {
-                const result = await window.opwallet.sendTransaction(tx);
-                walletInfo.innerHTML = '<span class="pill">💊</span> Minted 100 YARA! Tx: ' + result;
-            } catch (error) {
-                walletInfo.innerHTML = 'Mint failed: ' + error.message;
-            }
-        });
-
-        // Stake YARA logic
-        document.getElementById('stakeYara').addEventListener('click', async () => {
-            const tx = { to: 'bc1p...stake-contract-address', data: 'stake(50)', value: '0' };
-            try {
-                const result = await window.opwallet.sendTransaction(tx);
-                walletInfo.innerHTML = '<span class="pill">💊</span> Staked 50 YARA! Tx: ' + result;
-            } catch (error) {
-                walletInfo.innerHTML = 'Stake failed: ' + error.message;
-            }
-        });
-
-        // View Wallet logic
-        document.getElementById('viewWallet').addEventListener('click', async () => {
-            try {
-                const balance = await window.opwallet.getBalance();
-                walletInfo.innerHTML = 'BTC: ' + balance.btc + ' | YARA: <span class="pill">💊</span> ' + balance.yara;
-            } catch (error) {
-                walletInfo.innerHTML = 'View failed: ' + error.message;
-            }
-        });
-    </script>
+  <!-- Load compiled JS (see README for build step) -->
+  <script type="module" src="CatBank.js"></script>
 </body>
 </html>
