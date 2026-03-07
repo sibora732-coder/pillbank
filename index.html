@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pill Bank</title>
+    <title>🐾 Pill Bank</title>
     <style>
         body {
             font-family: "Segoe UI", sans-serif;
@@ -17,23 +17,24 @@
             max-width: 520px;
             width: 100%;
             background: #fff;
-            border-radius: 18px;
+            border-radius: 25px;
             padding: 28px;
-            box-shadow: 0 16px 32px rgba(0,0,0,0.08);
+            box-shadow: 0 16px 32px rgba(0,0,0,0.1);
             text-align: center;
+            position: relative;
         }
-        .cat-photo {
-            width: 120px;
-            height: 120px;
-            object-fit: cover;
-            border-radius: 50%;
-            margin: 0 auto 12px;
-            border: 3px solid #ffd9b3;
+        .app::after {
+            content: "🐾";
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 2rem;
+            color: #d35400;
         }
         h1 {
             margin: 0 0 12px;
             color: #d35400;
-            font-size: 2rem;
+            font-size: 2.5rem;
         }
         .stat-grid {
             text-align: left;
@@ -44,6 +45,9 @@
         }
         .stat-grid p {
             margin: 6px 0;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
         }
         .btn {
             display: inline-block;
@@ -76,35 +80,75 @@
 </head>
 <body>
     <div class="app">
-        <!-- Твоя кошечка здесь -->
-        <img src="https://i.imgur.com/PLACEHOLDER.jpg" alt="Моя кошечка" class="cat-photo">
         <h1>🐾 Pill Bank</h1>
-        <p>Подключите кошелёк и взаимодействуйте с контрактом.</p>
-
+        <p>Connect your wallet to interact with the contract.</p>
         <div>
-            <button id="connect-btn" class="btn">Подключить кошелёк</button>
-            <button id="mint-btn" class="btn" disabled>Mint (только владелец)</button>
+            <button id="connect-btn" class="btn">Connect Wallet</button>
+            <button id="mint-btn" class="btn" disabled>Mint (Owner Only)</button>
         </div>
-
         <div class="stat-grid">
-            <p><strong>Токен контракт:</strong> <span>0x403925f98169763bd2dd78b73cdc20421a4b2df7fa3ea171abba278dce2458ca</span></p>
-            <p><strong>Кошелек казначейства:</strong> <span>0x403925f98169763bd2dd78b73cdc20421a4b2df7fa3ea171abba278dce2458ca</span></p>
-            <p><strong>Адрес:</strong> <span id="wallet-address">Not connected</span></p>
-            <p><strong>BTC баланс:</strong> <span id="btc-balance">0</span></p>
-            <p><strong>YARA баланс:</strong> <span id="yara-balance">0</span></p>
-            <p><strong>В стейкинге:</strong> <span id="staked-balance">0</span></p>
+            <p><strong>Token Contract:</strong> <span id="token-contract">0x403925...58ca</span></p>
+            <p><strong>Treasury Wallet:</strong> <span id="treasury-wallet">opt1pcx4...q8m</span></p>
+            <p><strong>Your Address:</strong> <span id="user-address">Not connected</span></p>
+            <p><strong>BTC Balance:</strong> <span id="btc-balance">0</span></p>
+            <p><strong>YARA Balance:</strong> <span id="yara-balance">0</span></p>
+            <p><strong>Staked:</strong> <span id="staked-balance">0</span></p>
         </div>
-
         <div>
-            <h3>Staking</h3>
+            <h3>🐱 Staking</h3>
             <button id="approve-btn" class="btn" disabled>Approve</button>
             <button id="stake-btn" class="btn" disabled>Stake</button>
             <button id="unstake-btn" class="btn" disabled>Unstake</button>
         </div>
-
-        <div id="status"></div>
+        <div id="status">Waiting for connection...</div>
     </div>
+    <script>
+        const OWNER = "opt1pcx4nk6acad6z43qt0fh5t7lcdt65yp2uh3mcvzc3h0vxkurkhkus8l8q8m";
+        const TOKEN = "0x403925f98169763bd2dd78b73cdc20421a4b2df7fa3ea171abba278dce2458ca";
 
-    <script src="CatBank.js"></script>
+        const connectBtn = document.getElementById("connect-btn");
+        const mintBtn = document.getElementById("mint-btn");
+        const statusDiv = document.getElementById("status");
+        const addrSpan = document.getElementById("user-address");
+
+        function log(msg) {
+            const time = new Date().toLocaleTimeString();
+            statusDiv.innerHTML = `<div>> [${time}] ${msg}</div>` + statusDiv.innerHTML;
+        }
+
+        async function connect() {
+            try {
+                if (!window.unisat && !window.opnet) {
+                    alert("Please install UniSat or OP Wallet!");
+                    log("Error: Wallet not found");
+                    return;
+                }
+
+                log("Connecting wallet...");
+                const accounts = await (window.unisat || window.opnet).requestAccounts();
+                const address = accounts[0];
+
+                addrSpan.innerText = address;
+                connectBtn.innerText = "Connected 🐾";
+                connectBtn.disabled = true;
+
+                if (address.toLowerCase() === OWNER.toLowerCase()) {
+                    mintBtn.disabled = false;
+                    log("Welcome owner! Minting available");
+                } else {
+                    log("Connected as: " + address);
+                }
+
+                document.getElementById("btc-balance").innerText = "0.0005";
+                document.getElementById("yara-balance").innerText = "200";
+
+            } catch (e) {
+                log("Error: " + e.message);
+            }
+        }
+
+        connectBtn.onclick = connect;
+        log("Ready to connect");
+    </script>
 </body>
 </html>
