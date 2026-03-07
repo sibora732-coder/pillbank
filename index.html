@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -164,10 +163,11 @@
         <p class="subtitle">Connect your wallet to interact with the contract.</p>
 
         <div class="btn-container">
-            <!-- ИСПРАВЛЕНЫ НАЗВАНИЯ -->
+            <!-- Кнопки с точными названиями -->
             <button id="btn-connect" class="btn">Connect Wallet</button>
             <button id="btn-mint" class="btn" disabled>Mint (Owner Only)</button>
-            <button id="btn-view-wallet" class="btn" onclick="viewWallet()" disabled>View Wallet</button>
+            <button id="btn-stake" class="btn" disabled>Stake YARA</button>
+            <button id="btn-view" class="btn" disabled>View Wallet</button>
         </div>
 
         <div class="stats-box">
@@ -184,16 +184,8 @@
                 <span id="user-addr" class="stat-value">Not connected</span>
             </div>
             <div class="stat-row">
-                <span>BTC Balance:</span>
-                <span id="btc-bal" class="stat-value">0</span>
-            </div>
-            <div class="stat-row">
                 <span>YARA Balance:</span>
                 <span id="yara-bal" class="stat-value">0</span>
-            </div>
-            <div class="stat-row">
-                <span>Staked:</span>
-                <span id="stake-bal" class="stat-value">0</span>
             </div>
         </div>
 
@@ -201,6 +193,7 @@
         <div class="staking-area" id="staking-area">
             <h3>🐱 Staking</h3>
             <div class="btn-container">
+                <!-- Кнопки с точными названиями -->
                 <button id="btn-approve" class="btn" disabled>Approve</button>
                 <button id="btn-stake" class="btn" disabled>Stake</button>
                 <button id="btn-unstake" class="btn" disabled>Unstake</button>
@@ -219,11 +212,12 @@
         // ЭЛЕМЕНТЫ
         const btnConnect = document.getElementById("btn-connect");
         const btnMint = document.getElementById("btn-mint");
-        const btnViewWallet = document.getElementById("btn-view-wallet");
+        const btnStake = document.getElementById("btn-stake");
+        const btnView = document.getElementById("btn-view");
 
         // Кнопки стейкинга
         const btnApprove = document.getElementById("btn-approve");
-        const btnStake = document.getElementById("btn-stake");
+        const btnStakeStaking = document.getElementById("btn-stake"); // Исправлено имя для стейкинга
         const btnUnstake = document.getElementById("btn-unstake");
         const btnHarvest = document.getElementById("btn-harvest");
 
@@ -231,181 +225,4 @@
         const txtLog = document.getElementById("status-log");
 
         function log(msg) {
-            const time = new Date().toLocaleTimeString();
-            txtLog.innerHTML = `<div>[${time}] ${msg}</div>` + txtLog.innerHTML;
-        }
-
-        async function connectWallet() {
-            try {
-                const provider = window.unisat || window.opnet;
-                
-                if (!provider) {
-                    alert("Please install UniSat or OP Wallet extension!");
-                    log("Error: Wallet extension not found");
-                    return;
-                }
-
-                log("Connecting to wallet...");
-                const accounts = await provider.requestAccounts();
-                const account = accounts[0];
-
-                // Обновляем UI
-                txtAddr.innerText = account.slice(0, 10) + "..." + account.slice(-8);
-                btnConnect.innerText = "Connected ✓";
-                btnConnect.disabled = true;
-                
-                // Включаем кнопки
-                btnApprove.disabled = false;
-                btnStake.disabled = false;
-                btnUnstake.disabled = false;
-                btnHarvest.disabled = false;
-                btnViewWallet.disabled = false;
-
-                // Проверка владельца
-                if (account.toLowerCase() === OWNER_ADDR.toLowerCase()) {
-                    btnMint.disabled = false;
-                    log("Welcome Owner! 🐾 Minting enabled.");
-                } else {
-                    log("Connected successfully!");
-                }
-
-                // Балансы сбрасываются до 0 до вызова viewWallet
-                document.getElementById("btc-bal").innerText = "0";
-                document.getElementById("yara-bal").innerText = "0";
-                document.getElementById("stake-bal").innerText = "0";
-
-            } catch (err) {
-                console.error(err);
-                log("Connection failed: " + err.message);
-                // Сброс состояния
-                btnConnect.innerText = "Connect Wallet";
-                btnConnect.disabled = false;
-                btnApprove.disabled = true;
-                btnStake.disabled = true;
-                btnUnstake.disabled = true;
-                btnHarvest.disabled = true;
-                btnViewWallet.disabled = true;
-            }
-        }
-
-        // Минтинг (owner) - симуляция
-        async function mintToken() {
-            try {
-                const provider = window.unisat || window.opnet;
-                log("Requesting Mint transaction...");
-                let current = parseFloat(document.getElementById("yara-bal").innerText);
-                document.getElementById("yara-bal").innerText = (current + 10).toFixed(2);
-                alert("✅ Mint successful! +10 YARA added.");
-                log("Minted 10 YARA tokens");
-            } catch (err) {
-                log("Mint failed: " + err.message);
-            }
-        }
-
-        // Стейкинг (симуляция)
-        async function stakeYara() {
-            try {
-                const provider = window.unisat || window.opnet;
-                log("Initiating Stake YARA operation...");
-
-                if (!btnConnect.disabled || !provider) { 
-                    alert("Please connect your wallet first.");
-                    log("Wallet not connected for staking.");
-                    return;
-                }
-
-                alert("Stake YARA operation simulated. (+ YARA to staked balance)");
-                
-                let currentStaked = parseFloat(document.getElementById("stake-bal").innerText);
-                document.getElementById("stake-bal").innerText = (currentStaked + 100).toFixed(2);
-                log("Staked YARA (simulated)");
-            } catch (err) {
-                console.error(err);
-                log("Stake operation failed: " + err.message);
-            }
-        }
-
-        // Unstake (симуляция)
-        async function unstakeYara() {
-            try {
-                const provider = window.unisat || window.opnet;
-                log("Initiating Unstake YARA operation...");
-                if (!btnConnect.disabled || !provider) { 
-                    alert("Please connect your wallet first.");
-                    log("Wallet not connected for unstaking.");
-                    return;
-                }
-                let currentStaked = parseFloat(document.getElementById("stake-bal").innerText);
-                const newVal = Math.max(0, currentStaked - 50);
-                document.getElementById("stake-bal").innerText = newVal.toFixed(2);
-                log("Unstaked YARA (simulated)");
-            } catch (err) {
-                console.error(err);
-                log("Unstake failed: " + err.message);
-            }
-        }
-
-        // Harvest (получение наград - симуляция)
-        async function harvestRewards() {
-            try {
-                const provider = window.unisat || window.opnet;
-                log("Harvesting rewards...");
-                if (!btnConnect.disabled || !provider) { 
-                    alert("Please connect your wallet first.");
-                    log("Wallet not connected for harvesting.");
-                    return;
-                }
-                let currentYara = parseFloat(document.getElementById("yara-bal").innerText);
-                document.getElementById("yara-bal").innerText = (currentYara + 5).toFixed(2);
-                alert("✅ Rewards harvested! +5 YARA");
-                log("Harvested 5 YARA rewards");
-            } catch (err) {
-                console.error(err);
-                log("Harvest failed: " + err.message);
-            }
-        }
-
-        // View Wallet (симуляция)
-        async function viewWallet() {
-            log("Viewing wallet details (simulation)...");
-            try {
-                const provider = window.unisat || window.opnet;
-                if (!provider || btnConnect.disabled !== true) { 
-                    alert("Please connect your wallet first.");
-                    log("Wallet not connected for viewing details.");
-                    return;
-                }
-                const accounts = await provider.getAccounts();
-                const account = accounts[0];
-                // Симуляция получения случайных балансов
-                const btcBalance = (Math.random() * 0.01).toFixed(4);
-                const yaraBalance = (Math.random() * 1000).toFixed(2);
-                const stakedBalance = (Math.random() * 500).toFixed(2);
-
-                document.getElementById("user-addr").innerText = account.slice(0, 10) + "..." + account.slice(-8);
-                document.getElementById("btc-bal").innerText = btcBalance;
-                document.getElementById("yara-bal").innerText = yaraBalance;
-                document.getElementById("stake-bal").innerText = stakedBalance;
-
-                log(`Wallet details updated.`);
-                alert("Wallet details refreshed.");
-            } catch (err) {
-                console.error(err);
-                log("Failed to view wallet details: " + err.message);
-            }
-        }
-
-        // Привязка обработчиков событий к кнопкам
-        btnConnect.addEventListener("click", connectWallet);
-        btnMint.addEventListener("click", mintToken);
-        btnApprove.onclick = () => log("Approval transaction requested..."); // Заглушка для Approve
-        btnStake.addEventListener("click", stakeYara);
-        btnUnstake.addEventListener("click", unstakeYara);
-        btnHarvest.addEventListener("click", harvestRewards);
-        btnViewWallet.addEventListener("click", viewWallet);
-
-        // Инициализация лога при загрузке страницы
-        log("🐾 Pill Bank ready - waiting for connection");
-    </script>
-</body>
-</html>
+            const time =
