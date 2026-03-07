@@ -1,178 +1,99 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pill Bank (Cat Edition)</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pill Bank</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f8e8d6;
-            color: #333;
-            text-align: center;
+            font-family: "Segoe UI", sans-serif;
+            background: #f8e8d6;
+            margin: 0;
             padding: 20px;
+            display: flex;
+            justify-content: center;
         }
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        .app {
+            max-width: 520px;
+            width: 100%;
+            background: #fff;
+            border-radius: 18px;
+            padding: 28px;
+            box-shadow: 0 16px 32px rgba(0,0,0,0.08);
+            text-align: center;
         }
-        h1 { color: #d35400; }
-        .btn {
-            background-color: #e67e22;
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            font-size: 18px;
-            border-radius: 10px;
-            cursor: pointer;
-            margin: 10px;
-            transition: 0.3s;
-            width: 80%;
+        h1 {
+            margin: 0 0 12px;
+            color: #d35400;
+            font-size: 2rem;
         }
-        .btn:hover { background-color: #d35400; }
-        .btn:disabled { background-color: #ccc; cursor: not-allowed; }
-        .info-box {
-            background: #fff3e0;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
+        .stat-grid {
             text-align: left;
+            background: #fff3e0;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 18px 0;
+        }
+        .stat-grid p {
+            margin: 6px 0;
+        }
+        .btn {
+            display: inline-block;
+            margin: 6px;
+            padding: 12px 22px;
+            font-size: 15px;
+            border: none;
+            border-radius: 10px;
+            background: #e67e22;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        .btn:hover { background: #d35400; }
+        .btn:disabled {
+            background: #c7c7c7;
+            cursor: not-allowed;
         }
         #status {
-            margin-top: 20px;
-            color: #555;
-            font-size: 14px;
-            height: 100px;
-            overflow-y: auto;
-            border-top: 1px solid #eee;
-            padding-top: 10px;
+            margin-top: 18px;
             text-align: left;
+            max-height: 110px;
+            overflow-y: auto;
+            font-size: 14px;
+            color: #4a4a4a;
+            border-top: 1px solid #eee;
+            padding-top: 12px;
         }
     </style>
 </head>
 <body>
+    <div class="app">
+        <h1>🐾 Pill Bank</h1>
+        <p>Подключите кошелёк и взаимодействуйте с контрактом.</p>
 
-<div class="container">
-    <h1>🐱 Pill Bank</h1>
-    
-    <!-- КНОПКИ -->
-    <button id="connect-btn" class="btn">Connect Wallet</button>
-    <button id="mint-btn" class="btn" disabled>Mint YARA (Owner)</button>
+        <div>
+            <button id="connect-btn" class="btn">Подключить кошелёк</button>
+            <button id="mint-btn" class="btn" disabled>Mint (только владелец)</button>
+        </div>
 
-    <!-- ИНФОРМАЦИЯ -->
-    <div class="info-box">
-        <p><strong>Address:</strong> <span id="wallet-address">Not connected</span></p>
-        <p><strong>BTC Balance:</strong> <span id="btc-balance">0</span></p>
-        <p><strong>YARA Balance:</strong> <span id="yara-balance">0</span></p>
+        <div class="stat-grid">
+            <p><strong>Адрес:</strong> <span id="wallet-address">не подключен</span></p>
+            <p><strong>BTC баланс:</strong> <span id="btc-balance">0</span></p>
+            <p><strong>YARA баланс:</strong> <span id="yara-balance">0</span></p>
+            <p><strong>В стейкинге:</strong> <span id="staked-balance">0</span></p>
+        </div>
+
+        <div>
+            <h3>Staking</h3>
+            <button id="approve-btn" class="btn" disabled>Approve</button>
+            <button id="stake-btn" class="btn" disabled>Stake</button>
+            <button id="unstake-btn" class="btn" disabled>Unstake</button>
+        </div>
+
+        <div id="status"></div>
     </div>
 
-    <!-- ЛОГИ -->
-    <div id="status">Ожидание действий...</div>
-</div>
-
-<!-- ВЕСЬ СКРИПТ ВНУТРИ -->
-<script>
-    // 1. НАСТРОЙКИ
-    const CONFIG = {
-        NETWORK: 'testnet3', // или 'livenet'
-        OWNER_ADDRESS: 'opt1pcx4nk6acad6z43qt0fh5t7lcdt65yp2uh3mcvzc3h0vxkurkhkus8l8q8m'
-    };
-
-    // 2. ЭЛЕМЕНТЫ
-    const connectBtn = document.getElementById("connect-btn");
-    const mintBtn = document.getElementById("mint-btn");
-    const addressSpan = document.getElementById("wallet-address");
-    const statusDiv = document.getElementById("status");
-
-    // 3. ФУНКЦИЯ ЛОГОВ
-    function log(msg) {
-        statusDiv.innerHTML = `<div>> ${msg}</div>` + statusDiv.innerHTML;
-        console.log(msg);
-    }
-
-    // 4. ПОДКЛЮЧЕНИЕ КОШЕЛЬКА
-    async function connectWallet() {
-        try {
-            log("Ищем кошелек...");
-            let address = "";
-            let walletType = "";
-
-            // Проверка Unisat
-            if (window.unisat) {
-                log("Найден Unisat!");
-                const accounts = await window.unisat.requestAccounts();
-                address = accounts[0];
-                walletType = "unisat";
-            } 
-            // Проверка OP Wallet (если есть)
-            else if (window.opnet) {
-                log("Найден OP Wallet!");
-                await window.opnet.requestAccounts();
-                address = await window.opnet.getAddress();
-                walletType = "opnet";
-            } 
-            else {
-                alert("Кошелек не найден! Установите Unisat или OP Wallet.");
-                return;
-            }
-
-            // Успешное подключение
-            addressSpan.innerText = address;
-            connectBtn.innerText = "Connected";
-            connectBtn.disabled = true;
-            log(`Подключено: ${address}`);
-
-            // Если это владелец - включаем кнопку Mint
-            if (address === CONFIG.OWNER_ADDRESS) {
-                mintBtn.disabled = false;
-                log("Вы владелец! Mint доступен.");
-            }
-
-            // Фейковый баланс для теста
-            document.getElementById("btc-balance").innerText = "0.0045";
-            document.getElementById("yara-balance").innerText = "100";
-
-        } catch (error) {
-            log("Ошибка подключения: " + error.message);
-        }
-    }
-
-    // 5. МИНТ ТОКЕНОВ
-    async function mintTokens() {
-        try {
-            log("Начинаем минт...");
-            const msg = "Mint 10 YARA confirmed via " + new Date().toISOString();
-            
-            // Подпись сообщения (симуляция транзакции)
-            let sig;
-            if (window.unisat) {
-                sig = await window.unisat.signMessage(msg);
-            } else if (window.opnet) {
-                sig = await window.opnet.signMessage(msg);
-            }
-            
-            log("Успех! Сигнатура: " + sig.substring(0, 15) + "...");
-            alert("Mint выполнен успешно! +10 YARA");
-            
-            // Обновляем баланс
-            let current = parseInt(document.getElementById("yara-balance").innerText);
-            document.getElementById("yara-balance").innerText = current + 10;
-
-        } catch (error) {
-            log("Ошибка минта: " + error.message);
-        }
-    }
-
-    // 6. ЗАПУСК КНОПОК
-    connectBtn.addEventListener("click", connectWallet);
-    mintBtn.addEventListener("click", mintTokens);
-
-    log("Приложение готово к работе.");
-</script>
-
+    <script src="CatBank.js"></script>
 </body>
 </html>
