@@ -1,14 +1,14 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>🐾 Pill Bank</title>
+    <title>Pill Bank</title>
     <style>
-        /* ВОЗВРАЩАЕМ ВАШ ДИЗАЙН */
         body {
-            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-            background: #f8e8d6; /* Ваш персиковый фон */
+            font-family: "Segoe UI", sans-serif;
+            background: #f8e8d6;
             margin: 0;
             padding: 20px;
             display: flex;
@@ -17,189 +17,85 @@
         .app {
             max-width: 520px;
             width: 100%;
-            background: #ffffff;
-            border-radius: 25px; /* Закругленные края */
-            padding: 30px;
-            box-shadow: 0 16px 40px rgba(0,0,0,0.1);
+            background: #fff;
+            border-radius: 18px;
+            padding: 28px;
+            box-shadow: 0 16px 32px rgba(0,0,0,0.08);
             text-align: center;
-            border: 2px solid #e67e22;
         }
-        h1 { margin: 0 0 10px; color: #d35400; font-size: 2.5rem; }
-        .subtitle { color: #a67c52; margin-bottom: 20px; font-weight: bold; }
-
+        h1 {
+            margin: 0 0 12px;
+            color: #d35400;
+            font-size: 2rem;
+        }
         .stat-grid {
             text-align: left;
-            background: #fff3e0; /* Ваш светлый блок статистики */
-            border-radius: 15px;
-            padding: 20px;
-            margin: 20px 0;
-            border: 1px solid #ffcc80;
+            background: #fff3e0;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 18px 0;
         }
-        .stat-grid p { margin: 10px 0; font-size: 15px; color: #5d4037; border-bottom: 1px solid #ffe0b2; padding-bottom: 5px; }
-        .stat-grid span { font-weight: bold; color: #d35400; float: right; word-break: break-all; max-width: 60%; }
-
-        .btn-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
-        
+        .stat-grid p {
+            margin: 6px 0;
+        }
         .btn {
             display: inline-block;
-            padding: 14px 24px;
-            font-size: 16px;
-            font-weight: bold;
+            margin: 6px;
+            padding: 12px 22px;
+            font-size: 15px;
             border: none;
-            border-radius: 12px;
-            background: #e67e22; /* Ваш оранжевый цвет */
+            border-radius: 10px;
+            background: #e67e22;
             color: #fff;
             cursor: pointer;
-            transition: 0.3s ease;
-            box-shadow: 0 4px 0 #b35d13;
+            transition: background 0.2s ease;
         }
-        .btn:hover { background: #d35400; transform: translateY(-2px); }
-        .btn:active { transform: translateY(2px); box-shadow: none; }
-        .btn:disabled { background: #c7c7c7; box-shadow: none; cursor: not-allowed; transform: none; }
-
-        .staking-section {
-            margin-top: 25px;
-            padding: 15px;
-            background: #fff;
-            border-radius: 15px;
-            border: 2px dashed #ffcc80;
+        .btn:hover { background: #d35400; }
+        .btn:disabled {
+            background: #c7c7c7;
+            cursor: not-allowed;
         }
-        .staking-section h3 { color: #d35400; margin-bottom: 15px; }
-
-        #status-log {
-            margin-top: 20px;
+        #status {
+            margin-top: 18px;
             text-align: left;
-            height: 100px;
+            max-height: 110px;
             overflow-y: auto;
-            font-size: 13px;
-            background: #fdf5e6;
-            color: #795548;
-            border-radius: 10px;
-            padding: 10px;
-            border: 1px solid #ffe0b2;
-            font-family: monospace;
+            font-size: 14px;
+            color: #4a4a4a;
+            border-top: 1px solid #eee;
+            padding-top: 12px;
         }
     </style>
 </head>
 <body>
-
     <div class="app">
         <h1>🐾 Pill Bank</h1>
-        <p class="subtitle">Interact with YARA Token on OP_NET</p>
+        <p>Подключите кошелёк и взаимодействуйте с контрактом.</p>
 
-        <!-- MAIN ACTIONS -->
-        <div class="btn-container">
-            <button id="connect-btn" class="btn">Connect Wallet</button>
-            <button id="mint-btn" class="btn" disabled>Mint (Owner Only)</button>
+        <div>
+            <button id="connect-btn" class="btn">Подключить кошелёк</button>
+            <button id="mint-btn" class="btn" disabled>Mint (только владелец)</button>
         </div>
 
-        <!-- DASHBOARD -->
         <div class="stat-grid">
-            <p>Address: <span id="user-addr">Not connected</span></p>
-            <p>BTC Balance: <span id="btc-bal">0.0000</span></p>
-            <p>YARA Balance: <span id="yara-bal">0.00</span></p>
-            <p>Total Staked: <span id="staked-bal">0.00</span></p>
+            <p><strong>Токен контракт:</strong> <span>0x403925f98169763bd2dd78b73cdc20421a4b2df7fa3ea171abba278dce2458ca</span></p>
+            <p><strong>Кошелек казначейства:</strong> <span>0x403925f98169763bd2dd78b73cdc20421a4b2df7fa3ea171abba278dce2458ca</span></p>
+            <p><strong>Адрес:</strong> <span id="wallet-address">Not connected</span></p>
+            <p><strong>BTC баланс:</strong> <span id="btc-balance">0</span></p>
+            <p><strong>YARA баланс:</strong> <span id="yara-balance">0</span></p>
+            <p><strong>В стейкинге:</strong> <span id="staked-balance">0</span></p>
         </div>
 
-        <!-- STAKING AREA -->
-        <div class="staking-section">
-            <h3>🐱 Staking Farm</h3>
-            <div class="btn-container">
-                <button id="approve-btn" class="btn" disabled>Approve</button>
-                <button id="stake-btn" class="btn" disabled>Stake</button>
-                <button id="unstake-btn" class="btn" disabled>Unstake</button>
-            </div>
+        <div>
+            <h3>Staking</h3>
+            <button id="approve-btn" class="btn" disabled>Approve</button>
+            <button id="stake-btn" class="btn" disabled>Stake</button>
+            <button id="unstake-btn" class="btn" disabled>Unstake</button>
         </div>
 
-        <!-- LOGS -->
-        <div id="status-log">System initialized. Waiting for wallet...</div>
+        <div id="status"></div>
     </div>
 
-    <script>
-        // YOUR DATA
-        const OWNER_WALLET = "opt1pcx4nk6acad6z43qt0fh5t7lcdt65yp2uh3mcvzc3h0vxkurkhkus8l8q8m";
-        const TOKEN_ID = "0x403925f98169763bd2dd78b73cdc20421a4b2df7fa3ea171abba278dce2458ca";
-
-        // ELEMENTS
-        const btnConnect = document.getElementById("connect-btn");
-        const btnMint = document.getElementById("mint-btn");
-        const btnApprove = document.getElementById("approve-btn");
-        const btnStake = document.getElementById("stake-btn");
-        const btnUnstake = document.getElementById("unstake-btn");
-        
-        const logWindow = document.getElementById("status-log");
-        const addrDisplay = document.getElementById("user-addr");
-        const yaraDisplay = document.getElementById("yara-bal");
-
-        function addLog(msg) {
-            const time = new Date().toLocaleTimeString();
-            logWindow.innerHTML = `<div>[${time}] ${msg}</div>` + logWindow.innerHTML;
-        }
-
-        async function connect() {
-            try {
-                const wallet = window.unisat || window.opnet;
-                if (!wallet) {
-                    alert("UniSat or OP Wallet not found!");
-                    return;
-                }
-
-                addLog("Connecting...");
-                const accounts = await wallet.requestAccounts();
-                const address = accounts[0];
-
-                // Update UI
-                addrDisplay.innerText = address;
-                btnConnect.innerText = "Connected 🐾";
-                btnConnect.disabled = true;
-                
-                // Enable buttons
-                btnApprove.disabled = false;
-                btnStake.disabled = false;
-                btnUnstake.disabled = false;
-
-                addLog("Wallet active: " + address);
-
-                // Admin check
-                if (address.toLowerCase() === OWNER_WALLET.toLowerCase()) {
-                    btnMint.disabled = false;
-                    addLog("Welcome, Owner! Minting enabled.");
-                }
-
-                // Initial mock values
-                document.getElementById("btc-bal").innerText = "0.0025";
-                yaraDisplay.innerText = "150.00";
-
-            } catch (err) {
-                addLog("Error: " + err.message);
-            }
-        }
-
-        async function mint() {
-            try {
-                const wallet = window.unisat || window.opnet;
-                addLog("Requesting Mint...");
-                
-                const sig = await wallet.signMessage("Minting 10 YARA tokens");
-                addLog("Transaction signed: " + sig.substring(0, 10) + "...");
-                
-                let val = parseFloat(yaraDisplay.innerText);
-                yaraDisplay.innerText = (val + 10).toFixed(2);
-                alert("Minting success! +10 YARA");
-            } catch (err) {
-                addLog("Minting failed: " + err.message);
-            }
-        }
-
-        // BINDING
-        btnConnect.onclick = connect;
-        btnMint.onclick = mint;
-        
-        btnApprove.onclick = () => addLog("Approve requested for " + TOKEN_ID.substring(0,10) + "...");
-        btnStake.onclick = () => addLog("Staking pool currently unavailable.");
-        btnUnstake.onclick = () => addLog("No tokens to withdraw.");
-
-        addLog("🐾 Pill Bank Ready.");
-    </script>
+    <script src="CatBank.js"></script>
 </body>
 </html>
