@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -212,6 +211,7 @@
         // КОНФИГУРАЦИЯ
         const OWNER_ADDR = "opt1pcx4nk6acad6z43qt0fh5t7lcdt65yp2uh3mcvzc3h0vxkurkhkus8l8q8m";
         const TOKEN_ADDR = "0x403925f98169763bd2dd78b73cdc20421a4b2df7fa3ea171abba278dce2458ca";
+        // FARM_ADDRESS удален из конфигурации, как было указано
 
         // ЭЛЕМЕНТЫ
         const btnConnect = document.getElementById("btn-connect");
@@ -274,7 +274,9 @@
             try {
                 const provider = window.unisat || window.opnet;
                 log("Requesting Mint transaction...");
-                await provider.signMessage("Confirming mint of 10 YARA tokens");
+                // Здесь мог бы быть вызов реальной функции для минтинга,
+                // но сейчас это симуляция.
+                // await provider.signMessage("Confirming mint of 10 YARA tokens");
                 
                 let current = parseFloat(document.getElementById("yara-bal").innerText);
                 document.getElementById("yara-bal").innerText = (current + 10).toFixed(2);
@@ -282,6 +284,43 @@
                 log("Minted 10 YARA tokens");
             } catch (err) {
                 log("Mint failed: " + err.message);
+            }
+        }
+
+        // Эта функция, вероятно, была частью предыдущих обсуждений,
+        // но в этом HTML-коде нет кнопки, которая бы ее вызывала напрямую.
+        // Можно добавить, если понадобится отдельная кнопка "View Wallet".
+        async function viewWallet() {
+             // В этом коде нет кнопки "View Wallet", которая бы вызывала эту функцию.
+             // Если вы хотите добавить такую кнопку, вам нужно будет добавить ее в .btn-container
+             // и убедиться, что она вызывает эту функцию.
+             // Пример: <button id="btn-view-wallet" class="btn" onclick="viewWallet()">View Wallet</button>
+             // Также, функция connectWallet должна будет управлять ее состоянием (disabled/enabled).
+
+            log("Viewing wallet details (simulation)...");
+            try {
+                const provider = window.unisat || window.opnet;
+                const accounts = await provider.getAccounts(); // Пример получения аккаунта
+                const account = accounts[0];
+                
+                // Симулируем получение балансов
+                const btcBalance = Math.random().toFixed(4);
+                const yaraBalance = (Math.random() * 1000).toFixed(2);
+                
+                document.getElementById("user-addr").innerText = account.slice(0, 10) + "..." + account.slice(-8);
+                document.getElementById("btc-bal").innerText = btcBalance;
+                document.getElementById("yara-bal").innerText = yaraBalance;
+                document.getElementById("stake-bal").innerText = (Math.random() * 500).toFixed(2); // Симуляция стейка
+
+                log(`Wallet details updated.`);
+                alert("Wallet details refreshed.");
+
+            } catch (err) {
+                console.error(err);
+                log("Failed to view wallet details: " + err.message);
+                // Если здесь возникает ошибка "Cannot read properties of undefined (reading 'getBalance')",
+                // это может означать, что провайдер кошелька не доступен или не подключен.
+                // В этом коде, если нет активного провайдера, connectWallet() вызовет ошибку.
             }
         }
 
