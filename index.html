@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,92 +7,88 @@
   <title>Pill Bank</title>
   <style>
     body{
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif;
       background-color:#fdf2e9;
       display:flex;justify-content:center;align-items:center;
-      min-height:100vh;margin:0;padding:20px;
+      min-height:100vh;margin:0;padding:20px
     }
     .container{
-      background:#fff;width:100%;max-width:520px;
-      border-radius:24px;padding:30px;
-      box-shadow:0 10px 40px rgba(230,126,34,.2);
-      text-align:center;border:2px solid #e67e22;
-    }
-    .top-title{
-      font-size:18px;font-weight:700;color:#333;margin:0 0 12px 0;
+      background:#fff;width:100%;max-width:520px;border-radius:24px;
+      padding:30px;box-shadow:0 10px 40px rgba(230,126,34,.2);
+      text-align:center;border:2px solid #e67e22
     }
     .cat-photo{
-      width:180px;height:180px;border-radius:50%;
-      object-fit:cover;border:6px solid #e67e22;
-      margin:0 auto 18px auto;display:block;
-      box-shadow:0 6px 20px rgba(0,0,0,.15);
+      width:180px;height:180px;border-radius:50%;object-fit:cover;
+      border:6px solid #e67e22;margin-bottom:20px;
+      box-shadow:0 6px 20px rgba(0,0,0,.15)
     }
-    h1{color:#d35400;margin:8px 0 8px;font-size:28px;}
-    p.subtitle{color:#8b5a2b;font-size:15px;margin:0 0 18px;}
+    h1{color:#d35400;margin:10px 0 8px;font-size:28px}
+    p.subtitle{color:#8b5a2b;font-size:15px;margin-bottom:20px}
     .btn-container{
       display:flex;justify-content:center;gap:12px;flex-wrap:wrap;
-      margin:0 0 18px;
+      margin-bottom:25px
     }
     .btn{
       background:linear-gradient(135deg,#e67e22 0%,#d35400 100%);
-      color:#fff;border:none;padding:14px 26px;border-radius:14px;
+      color:#fff;border:none;padding:14px 28px;border-radius:14px;
       font-weight:600;font-size:15px;cursor:pointer;
-      transition:all .2s ease;box-shadow:0 5px 15px rgba(211,84,0,.3);
+      transition:all .2s ease;box-shadow:0 5px 15px rgba(211,84,0,.3)
     }
-    .btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(211,84,0,.35);}
-    .btn:disabled{background:#d0d0d0;color:#909090;cursor:not-allowed;transform:none;box-shadow:none;}
+    .btn:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(211,84,0,.4)}
+    .btn:active{transform:translateY(0)}
+    .btn:disabled{
+      background:#d0d0d0;color:#909090;cursor:not-allowed;
+      transform:none;box-shadow:none
+    }
     .stats-box{
-      background:#fff8f0;border-radius:18px;padding:18px;margin:0;
-      text-align:left;border:2px dashed #ffcc80;
+      background:#fff8f0;border-radius:18px;padding:22px;margin:20px 0;
+      text-align:left;border:2px dashed #ffcc80
     }
     .stat-row{
-      display:flex;justify-content:space-between;gap:12px;
-      margin:0 0 12px;font-size:14px;color:#555;
-      border-bottom:1px solid #fae5d3;padding-bottom:8px;
+      display:flex;justify-content:space-between;margin-bottom:14px;
+      font-size:14px;color:#555;border-bottom:1px solid #fae5d3;
+      padding-bottom:8px
     }
-    .stat-row:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+    .stat-row:last-child{border-bottom:none;margin-bottom:0}
     .stat-value{
-      font-weight:700;color:#d35400;max-width:220px;
-      overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+      font-weight:700;color:#d35400;max-width:200px;overflow:hidden;
+      text-overflow:ellipsis;white-space:nowrap
     }
     .log-area{
-      margin-top:16px;font-size:13px;color:#666;text-align:left;
-      padding:10px 12px;background:#fbfbfb;border-radius:10px;
-      border-left:3px solid #e67e22;
+      margin-top:20px;font-size:13px;color:#999;text-align:left;
+      max-height:160px;overflow-y:auto;padding:10px;background:#fbfbfb;
+      border-radius:10px;border-left:3px solid #e67e22
     }
-    .log-line{margin:0 0 6px 0;}
-    .log-line:last-child{margin-bottom:0;}
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="top-title">My Beautiful Cat</div>
-
-    <img
-      src="kitti YARA.jpg"
-      alt="My Beautiful Cat"
-      class="cat-photo"
-      onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐱</text></svg>'"
-    />
+    <img src="kitti YARA.jpg"
+         alt="My Beautiful Cat"
+         class="cat-photo"
+         onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐱</text></svg>'">
 
     <h1>🐾 Pill Bank</h1>
     <p class="subtitle">Connect your wallet to interact with the contract.</p>
 
+    <!-- ИЗНАЧАЛЬНО 4 КНОПКИ: Connect / Mint / Stake / View -->
     <div class="btn-container">
       <button id="btn-connect" class="btn">Connect Wallet</button>
       <button id="btn-mint" class="btn" disabled>Mint (Owner Only)</button>
-      <button id="btn-stake-yara" class="btn" disabled>Stake YARA</button>
-      <button id="btn-view" class="btn" disabled>View Wallet</button>
+      <button id="btn-stake" class="btn" disabled>Stake YARA</button>
+      <button id="btn-view-wallet" class="btn" disabled>View Wallet</button>
     </div>
 
     <div class="stats-box">
       <div class="stat-row">
         <span>Token Contract:</span>
-        <span class="stat-value" title="0x403925f98169763bd2dd78b73cdc20421a4b2df7fa3ea171abba278dce2458ca">0x4039...58ca</span>
+        <span class="stat-value"
+              title="0x403925f98169763bd2dd78b73cdc20421a4b2df7fa3ea171abba278dce2458ca">0x4039...58ca</span>
       </div>
       <div class="stat-row">
         <span>Treasury Wallet:</span>
-        <span class="stat-value" title="opt1pcx4nk6acad6z43qt0fh5t7lcdt65yp2uh3mcvzc3h0vxkurkhkus8l8q8m">opt1...q8m</span>
+        <span class="stat-value"
+              title="opt1pcx4nk6acad6z43qt0fh5t7lcdt65yp2uh3mcvzc3h0vxkurkhkus8l8q8m">opt1...q8m</span>
       </div>
       <div class="stat-row">
         <span>Your Address:</span>
@@ -103,122 +100,116 @@
       </div>
     </div>
 
-    <div class="log-area" id="status-log"></div>
+    <div class="log-area" id="status-log">Waiting for connection...</div>
   </div>
 
   <script>
     const OWNER_ADDR = "opt1pcx4nk6acad6z43qt0fh5t7lcdt65yp2uh3mcvzc3h0vxkurkhkus8l8q8m";
+    const TOKEN_ADDR = "0x403925f98169763bd2dd78b73cdc20421a4b2df7fa3ea171abba278dce2458ca";
 
     const btnConnect = document.getElementById("btn-connect");
     const btnMint = document.getElementById("btn-mint");
-    const btnStakeYara = document.getElementById("btn-stake-yara");
-    const btnView = document.getElementById("btn-view");
+    const btnStake = document.getElementById("btn-stake");
+    const btnViewWallet = document.getElementById("btn-view-wallet");
 
-    const userAddrEl = document.getElementById("user-addr");
-    const yaraBalEl = document.getElementById("yara-bal");
-    const logEl = document.getElementById("status-log");
+    const txtAddr = document.getElementById("user-addr");
+    const txtYara = document.getElementById("yara-bal");
+    const txtLog = document.getElementById("status-log");
 
-    let connectedAccount = null;
-
-    function ts() {
-      return new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    function log(msg){
+      const time = new Date().toLocaleTimeString();
+      txtLog.innerHTML = `<div>[${time}] ${msg}</div>` + txtLog.innerHTML;
     }
 
-    function setLog(lines) {
-      logEl.innerHTML = lines.map(l => `<div class="log-line">${l}</div>`).join("");
-    }
-
-    function addLog(line) {
-      logEl.innerHTML = `<div class="log-line">${line}</div>` + logEl.innerHTML;
-    }
-
-    function getProvider() {
+    function getProvider(){
       return window.unisat || window.opnet || null;
     }
 
-    function shortAddr(a) {
-      if (!a || typeof a !== "string") return "Not connected";
-      if (a.length <= 16) return a;
-      return a.slice(0, 10) + "..." + a.slice(-8);
-    }
-
-    async function connectWallet() {
-      const provider = getProvider();
-      if (!provider) {
-        setLog([`[${ts()}] Error: Wallet extension not found`, "Waiting for connection..."]);
-        alert("Please install UniSat or OP Wallet extension!");
-        return;
-      }
-
-      try {
-        addLog(`[${ts()}] Connecting...`);
-        const accounts = await provider.requestAccounts();
-        connectedAccount = accounts && accounts[0] ? accounts[0] : null;
-
-        userAddrEl.textContent = shortAddr(connectedAccount);
-        yaraBalEl.textContent = "0";
-
-        btnConnect.textContent = "Connected ✓";
-        btnConnect.disabled = true;
-
-        btnStakeYara.disabled = false;
-        btnView.disabled = false;
-
-        if (connectedAccount && connectedAccount.toLowerCase && connectedAccount.toLowerCase() === OWNER_ADDR.toLowerCase()) {
-          btnMint.disabled = false;
-        } else {
-          btnMint.disabled = true;
+    async function connectWallet(){
+      try{
+        const provider = getProvider();
+        if(!provider){
+          alert("Please install UniSat or OP Wallet extension!");
+          log("Error: Wallet extension not found");
+          return;
         }
 
-        setLog([`[${ts()}] Connected`, ""]);
-      } catch (e) {
-        connectedAccount = null;
-        btnConnect.textContent = "Connect Wallet";
+        log("Connecting to wallet...");
+        const accounts = await provider.requestAccounts();
+        const account = accounts?.[0];
+        if(!account) throw new Error("No accounts returned");
+
+        txtAddr.innerText = account.slice(0,10) + "..." + account.slice(-8);
+        btnConnect.innerText = "Connected ✓";
+        btnConnect.disabled = true;
+
+        btnStake.disabled = false;
+        btnViewWallet.disabled = false;
+
+        if(account.toLowerCase() === OWNER_ADDR.toLowerCase()){
+          btnMint.disabled = false;
+          log("Welcome Owner! Mint enabled.");
+        } else {
+          log("Connected successfully!");
+        }
+
+        txtYara.innerText = "0";
+      } catch(err){
+        log("Connection failed: " + (err?.message || err));
+        btnConnect.innerText = "Connect Wallet";
         btnConnect.disabled = false;
         btnMint.disabled = true;
-        btnStakeYara.disabled = true;
-        btnView.disabled = true;
-
-        userAddrEl.textContent = "Not connected";
-        yaraBalEl.textContent = "0";
-
-        setLog([`[${ts()}] Connection failed: ${e && e.message ? e.message : "Unknown error"}`, "Waiting for connection..."]);
+        btnStake.disabled = true;
+        btnViewWallet.disabled = true;
       }
     }
 
-    async function mintOwnerOnly() {
-      if (!connectedAccount) return;
-      if (!connectedAccount.toLowerCase || connectedAccount.toLowerCase() !== OWNER_ADDR.toLowerCase()) {
-        alert("Owner only");
-        return;
+    async function mintToken(){
+      try{
+        log("Mint requested (simulation)...");
+        const current = parseFloat(txtYara.innerText || "0");
+        txtYara.innerText = (current + 10).toFixed(2);
+        log("Minted +10 YARA (simulated)");
+      } catch(err){
+        log("Mint failed: " + (err?.message || err));
       }
-      const current = Number(yaraBalEl.textContent) || 0;
-      yaraBalEl.textContent = String(current + 10);
-      addLog(`[${ts()}] Mint simulated: +10 YARA`);
     }
 
-    async function stakeYara() {
-      if (!connectedAccount) return;
-      addLog(`[${ts()}] Stake simulated`);
-      alert("Stake YARA simulated");
+    async function stakeYara(){
+      try{
+        log("Stake YARA requested (simulation)...");
+        const current = parseFloat(txtYara.innerText || "0");
+        const amount = Math.min(50, current);
+        txtYara.innerText = (current - amount).toFixed(2);
+        log(`Staked ${amount.toFixed(2)} YARA (simulated)`);
+      } catch(err){
+        log("Stake failed: " + (err?.message || err));
+      }
     }
 
-    async function viewWallet() {
-      if (!connectedAccount) return;
-      const provider = getProvider();
-      if (!provider) return;
+    async function viewWallet(){
+      try{
+        const provider = getProvider();
+        if(!provider || btnConnect.disabled !== true){
+          alert("Please connect your wallet first.");
+          log("Wallet not connected.");
+          return;
+        }
 
-      addLog(`[${ts()}] View Wallet`);
-      // YARA balance is token-contract specific; keeping UI stable at 0 unless you later wire real contract calls.
-      alert("Wallet viewed (UI only)");
+        log("View Wallet (simulation)...");
+        // оставляем YARA как есть, чтобы не прыгало
+        log("Wallet view updated (simulated).");
+      } catch(err){
+        log("View Wallet failed: " + (err?.message || err));
+      }
     }
 
     btnConnect.addEventListener("click", connectWallet);
-    btnMint.addEventListener("click", mintOwnerOnly);
-    btnStakeYara.addEventListener("click", stakeYara);
-    btnView.addEventListener("click", viewWallet);
+    btnMint.addEventListener("click", mintToken);
+    btnStake.addEventListener("click", stakeYara);
+    btnViewWallet.addEventListener("click", viewWallet);
 
-    setLog([`[${ts()}] 🐾 Pill Bank ready - all systems online`, "Waiting for connection..."]);
+    log("🐾 Pill Bank ready - all systems online");
   </script>
 </body>
 </html>
