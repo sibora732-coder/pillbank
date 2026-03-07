@@ -1,164 +1,204 @@
-// CONFIGURATION
-const CONFIG = {
-    NETWORK: 'testnet3',
-    TOKEN_ADDRESS: '0x403925f98169763bd2dd78b73cdc20421a4b2df7fa3ea171abba278dce2458ca',
-    FARM_ADDRESS: '', // Empty means staking is disabled
-    OWNER_ADDRESS: 'opt1pcx4nk6acad6z43qt0fh5t7lcdt65yp2uh3mcvzc3h0vxkurkhkus8l8q8m'
-};
+/* ====== Конфигурация контрактов ====== */
+const TOKEN_ADDRESS  = "0xYourTokenAddress";
+const STAKING_ADDRESS = "0xYourStakingAddress";
 
-// GLOBAL STATE
-let state = {
-    connected: false,
-    address: "",
-    walletType: "", // "unisat" or "opnet"
-    balanceBTC: 0,
-    balanceYARA: 0,
-    stakedYARA: 0
-};
+const tokenAbi = [
+  "function balanceOf(address owner) view returns (uint256)",
+  "function mint(address to, uint256 amount)",
+  "function approve(address spender, uint256 amount)",
+  "function allowance(address owner, address spender) view returns (uint256)",
+  "function decimals() view returns (uint8)"
+];
 
-// DOM ELEMENTS
-const connectBtn = document.getElementById("connect-btn");
-const mintBtn = document.getElementById("mint-btn");
-const approveBtn = document.getElementById("approve-btn");
-const stakeBtn = document.getElementById("stake-btn");
-const unstakeBtn = document.getElementById("unstake-btn");
-const walletAddressSpan = document.getElementById("wallet-address");
-const btcBalanceSpan = document.getElementById("btc-balance");
-const yaraBalanceSpan = document.getElementById("yara-balance");
-const stakedBalanceSpan = document.getElementById("staked-balance");
-const statusDiv = document.getElementById("status");
+const stakingAbi = [
+  "function stake(uint256 amount)",
+  "function unstake(uint256 amount)",
+  "function stakedBalance(address owner) view returns (uint256)"
+];
 
-// HELPER: LOGGING
-function log(msg, type = "info") {
-    const color = type === "error" ? "red" : (type === "success" ? "green" : "black");
-    statusDiv.innerHTML = `<span style="color:${color}">[${new Date().toLocaleTimeString()}] ${msg}</span><br>` + statusDiv.innerHTML;
-    console.log(`[${type.toUpperCase()}] ${msg}`);
+/* ====== Вспомогательные ====== */
+function getProvider() {
+  if (window.ethereum?.providers) {
+    return window.ethereum.providers.find(p => p.isMetaMask) || window.ethereum.providers[0];
+  }
+  return window.ethereum ?? null;
 }
 
-// 1. CONNECT WALLET
-async function connectWallet() {
+function formatUnits(value, decimals = 18) {
+  if (!value) return "0";
+  return Number(ethers.utils.formatUnits(value, decimals)).toLocaleString("en-US", {
+    maximumFractionDigits: 4
+  });
+}
+
+function short(addr) {
+  if (!addr) return "—";
+  return addr.slice(0, 6) + "..." + addr.slice(-4);
+}
+
+/* ====== UI ====== */
+window.addEventListener("DOMContentLoaded", () => {
+  const provider = getProvider();
+  if (!provider) {
+    alert("Нет обнаруженных EVM-кошельков. Установите MetaMask или аналог.");
+    return;
+  }
+
+  const connectBtn   = document.getElementById("connect-btn");
+  const mintBtn      = document.getElementById("mint-btn");
+  const approveBtn   = document.getElementById("approve-btn");
+  const stakeBtn     = document.getElementById("stake-btn");
+  const unstakeBtn   = document.getElementById("unstake-btn");
+
+  const statusBox    = document.getElementById("status");
+  const walletSpan   = document.getElementById("wallet-address");
+  const btcSpan      = document.getElementById("btc-balance");
+  const yaraSpan     = document.getElementById("yara-balance");
+  const stakedSpan   = document.getElementById("staked-balance");
+
+  function log(message) {
+    const time = new Date().toLocaleTimeString();
+    statusBox.innerHTML += `<div>[${time}] ${message}</div>`;
+    statusBox.scrollTop = statusBox.scrollHeight;
+  }
+
+  async function refreshBalances(signer) {
     try {
-        // Check for OP Wallet or Unisat
-        if (typeof window.opnet !== 'undefined') {
-            log("Found OP Wallet...", "info");
-            await window.opnet.requestAccounts();
-            state.walletType = "opnet";
-            state.address = await window.opnet.getAddress();
-        } 
-        else if (typeof window.unisat !== 'undefined') {
-            log("Found Unisat Wallet...", "info");
-            await window.unisat.requestAccounts();
-            state.walletType = "unisat";
-            state.address = await window.unisat.getAccounts().then(acc => acc[0]);
-        } 
-        else {
-            alert("No OP_NET compatible wallet found! Please install OP Wallet.");
-            return;
-        }
+      const address = await signer.getAddress();
+      const token = new ethers.Contract(TOKEN_ADDRESS, tokenAbi, signer);
+      const staking = new ethers.Contract(STAKING_ADDRESS, stakingAbi, signer);
 
-        // Validate Network
-        const network = state.walletType === "opnet" ? await window.opnet.getNetwork() : await window.unisat.getNetwork();
-        if (network !== CONFIG.NETWORK) {
-            alert(`Wrong network! Please switch wallet to ${CONFIG.NETWORK}.`);
-            return;
-        }
+      const [decimals, tokenBalance, stakedBalance] = await Promise.all([
+        token.decimals(),
+        token.balanceOf(address),
+        staking.stakedBalance(address)
+      ]);
 
-        // Update UI
-        state.connected = true;
-        walletAddressSpan.innerText = state.address;
-        connectBtn.innerText = "Connected";
-        connectBtn.disabled = true;
-
-        // Enable Mint button only for Owner
-        if (state.address === CONFIG.OWNER_ADDRESS) {
-            mintBtn.disabled = false;
-        } else {
-            log("You are not the owner. Minting disabled.", "info");
-        }
-        
-        // Enable Staking only if Farm Address is set
-        if (CONFIG.FARM_ADDRESS) {
-            approveBtn.disabled = false;
-            stakeBtn.disabled = false;
-            unstakeBtn.disabled = false;
-        } else {
-            log("Staking disabled (Farm contract not deployed yet).", "info");
-        }
-
-        log(`Connected: ${state.address}`, "success");
-        await updateBalances();
-
+      walletSpan.textContent = short(address);
+      yaraSpan.textContent   = formatUnits(tokenBalance, decimals);
+      stakedSpan.textContent = formatUnits(stakedBalance, decimals);
     } catch (err) {
-        log(`Connection failed: ${err.message}`, "error");
+      log(`Ошибка обновления балансов: ${err.message ?? err}`);
     }
-}
+  }
 
-// 2. MINT TOKENS (Owner Only)
-async function mintTokens() {
-    if (!state.connected) return;
-
+  async function refreshNativeBalance(signer) {
     try {
-        log("Minting 10 YARA...", "info");
-        
-        // Example Mint Logic (Simplified for OP_NET)
-        // Usually involves calling a 'mint' method on the token contract
-        // Here we simulate a transfer/interaction
-        
-        const amount = 10; // Mint amount
-        // Note: Real minting requires interaction with the token contract method 'mint'
-        // Since we are using generic wallet calls, we assume a standard OP_20 mint call structure
-        // If your token uses a specific 'mint' endpoint, replace this logic.
-        
-        // For demonstration, we'll try to sign a message or transaction
-        // In a real scenario: await window.opnet.signTransaction(...)
-        
-        const msg = `Mint ${amount} YARA to ${state.address}\nDate: ${new Date().toISOString()}`;
-        
-        let signature;
-        if (state.walletType === "opnet") {
-            signature = await window.opnet.signMessage(msg);
-        } else {
-            signature = await window.unisat.signMessage(msg);
-        }
-
-        log(`Mint simulated! Signature: ${signature.slice(0, 20)}...`, "success");
-        alert(`Minted 10 YARA! (Simulation)\nTx: ${signature.slice(0,10)}...`);
-        
-        // Refresh balances
-        await updateBalances();
-
+      const address = await signer.getAddress();
+      const balance = await signer.provider.getBalance(address);
+      btcSpan.textContent = formatUnits(balance, 18);
     } catch (err) {
-        log(`Minting failed: ${err.message}`, "error");
+      log(`Ошибка баланса нативной монеты: ${err.message ?? err}`);
     }
-}
+  }
 
-// 3. UPDATE BALANCES
-async function updateBalances() {
-    if (!state.connected) return;
-    
-    // Simulate fetching balances
-    // In real OP_NET, use: await window.opnet.getBalance()
-    
-    // Randomize for demo purposes if no real RPC is connected
-    state.balanceBTC = (Math.random() * 0.1).toFixed(4); 
-    state.balanceYARA = (Math.random() * 1000).toFixed(0); 
+  /* ====== Кнопки ====== */
 
-    btcBalanceSpan.innerText = state.balanceBTC;
-    yaraBalanceSpan.innerText = state.balanceYARA;
-    
-    if (CONFIG.FARM_ADDRESS) {
-        stakedBalanceSpan.innerText = "0"; // Placeholder
+  connectBtn.addEventListener("click", async () => {
+    try {
+      await provider.request({ method: "eth_requestAccounts" });
+      const ethersProvider = new ethers.providers.Web3Provider(provider);
+      const signer = ethersProvider.getSigner();
+
+      connectBtn.disabled = true;
+      mintBtn.disabled = false;
+      approveBtn.disabled = false;
+      stakeBtn.disabled = false;
+      unstakeBtn.disabled = false;
+
+      log("Кошелёк подключён");
+      await refreshBalances(signer);
+      await refreshNativeBalance(signer);
+    } catch (err) {
+      log(`Отмена или ошибка подключения: ${err.message ?? err}`);
     }
+  });
+
+  mintBtn.addEventListener("click", async () => {
+    try {
+      const ethersProvider = new ethers.providers.Web3Provider(provider);
+      const signer = ethersProvider.getSigner();
+      const token = new ethers.Contract(TOKEN_ADDRESS, tokenAbi, signer);
+
+      const amount = prompt("Введите количество YARA для минтинга", "1000");
+      if (!amount) return;
+
+      const decimals = await token.decimals();
+      const tx = await token.mint(await signer.getAddress(), ethers.utils.parseUnits(amount, decimals));
+      log(`Mint отправлен. Хэш: ${tx.hash}`);
+      await tx.wait();
+      log("Mint подтверждён");
+      await refreshBalances(signer);
+    } catch (err) {
+      log(`Ошибка mint: ${err.message ?? err}`);
+    }
+  });
+
+  approveBtn.addEventListener("click", async () => {
+    try {
+      const ethersProvider = new ethers.providers.Web3Provider(provider);
+      const signer = ethersProvider.getSigner();
+      const token = new ethers.Contract(TOKEN_ADDRESS, tokenAbi, signer);
+
+      const amount = prompt("Сколько YARA одобрить для стейкинга?", "1000");
+      if (!amount) return;
+
+      const decimals = await token.decimals();
+      const tx = await token.approve(STAKING_ADDRESS, ethers.utils.parseUnits(amount, decimals));
+      log(`Approve отправлен: ${tx.hash}`);
+      await tx.wait();
+      log("Approve подтверждён");
+    } catch (err) {
+      log(`Ошибка approve: ${err.message ?? err}`);
+    }
+  });
+
+  stakeBtn.addEventListener("click", async () => {
+    try {
+      const ethersProvider = new ethers.providers.Web3Provider(provider);
+      const signer = ethersProvider.getSigner();
+      const staking = new ethers.Contract(STAKING_ADDRESS, stakingAbi, signer);
+      const token = new ethers.Contract(TOKEN_ADDRESS, tokenAbi, signer);
+
+      const amount = prompt("Сколько YARA отправить в стейкинг?", "100");
+      if (!amount) return;
+
+      const decimals = await token.decimals();
+      const tx = await staking.stake(ethers.utils.parseUnits(amount, decimals));
+      log(`Stake tx: ${tx.hash}`);
+      await tx.wait();
+      log("Stake подтверждён");
+      await refreshBalances(signer);
+    } catch (err) {
+      log(`Ошибка stake: ${err.message ?? err}`);
+    }
+  });
+
+  unstakeBtn.addEventListener("click", async () => {
+    try {
+      const ethersProvider = new ethers.providers.Web3Provider(provider);
+      const signer = ethersProvider.getSigner();
+      const staking = new ethers.Contract(opt1pcx4nk6acad6z43qt0fh5t7lcdt65yp2uh3mcvzc3h0vxkurkhkus8l8q8m);
+      const token = new ethers.Contract(0x403925f98169763bd2dd78b73cdc20421a4b2df7fa3ea171abba278dce2458ca);
+
+      const amount = prompt("Сколько YARA забрать?", "100");
+      if (!amount) return;
+
+      const decimals = await token.decimals();
+      const tx = await staking.unstake(ethers.utils.parseUnits(amount, decimals));
+      log(`Unstake tx: ${tx.hash}`);
+      await tx.wait();
+      log("Unstake подтверждён");
+      await refreshBalances(signer);
+    } catch (err) {
+      log(`Ошибка unstake: ${err.message ?? err}`);
+    }
+  });
+});
+
+/* ====== Подключаем ethers, если нужно ====== */
+if (typeof ethers === "undefined") {
+  const script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js";
+  document.head.appendChild(script);
 }
-
-// EVENT LISTENERS
-connectBtn.addEventListener('click', connectWallet);
-mintBtn.addEventListener('click', mintTokens);
-
-// Placeholder listeners for disabled buttons
-approveBtn.addEventListener('click', () => alert("Farm contract not set!"));
-stakeBtn.addEventListener('click', () => alert("Farm contract not set!"));
-unstakeBtn.addEventListener('click', () => alert("Farm contract not set!"));
-
-// INITIALIZATION
-log("App loaded. Waiting for wallet connection...", "info");
