@@ -19,7 +19,7 @@
         .container {
             background-color: white;
             width: 100%;
-            max-width: 520px;
+            max-width: 500px;
             border-radius: 24px;
             padding: 30px;
             box-shadow: 0 10px 40px rgba(230, 126, 34, 0.2);
@@ -134,20 +134,7 @@
             border-left: 3px solid #e67e22;
         }
         
-        /* БЛОК STAKING с 4 кнопками */
-        .staking-area {
-            margin-top: 25px;
-            padding: 20px;
-            background: #faf5f0;
-            border-radius: 16px;
-            border: 1px solid #ffe0b2;
-        }
-        
-        .staking-area h3 {
-            color: #d35400;
-            font-size: 18px;
-            margin-bottom: 15px;
-        }
+        /* Убрана секция staking-area, но кнопки в btn-container */
     </style>
 </head>
 <body>
@@ -163,11 +150,12 @@
         <p class="subtitle">Connect your wallet to interact with the contract.</p>
 
         <div class="btn-container">
-            <!-- Кнопки с точными названиями -->
+            <!-- ИСПРАВЛЕНЫ НАЗВАНИЯ -->
             <button id="btn-connect" class="btn">Connect Wallet</button>
             <button id="btn-mint" class="btn" disabled>Mint (Owner Only)</button>
-            <button id="btn-stake" class="btn" disabled>Stake YARA</button>
-            <button id="btn-view" class="btn" disabled>View Wallet</button>
+            <!-- НОВАЯ КНОПКА СТЕЙКИНГА -->
+            <button id="btn-stake-single" class="btn" disabled>Stake YARA</button>
+            <button id="btn-view-wallet" class="btn" onclick="viewWallet()" disabled>View Wallet</button>
         </div>
 
         <div class="stats-box">
@@ -184,20 +172,16 @@
                 <span id="user-addr" class="stat-value">Not connected</span>
             </div>
             <div class="stat-row">
+                <span>BTC Balance:</span>
+                <span id="btc-bal" class="stat-value">0</span>
+            </div>
+            <div class="stat-row">
                 <span>YARA Balance:</span>
                 <span id="yara-bal" class="stat-value">0</span>
             </div>
-        </div>
-
-        <!-- БЛОК STAKING с 4 кнопками -->
-        <div class="staking-area" id="staking-area">
-            <h3>🐱 Staking</h3>
-            <div class="btn-container">
-                <!-- Кнопки с точными названиями -->
-                <button id="btn-approve" class="btn" disabled>Approve</button>
-                <button id="btn-stake" class="btn" disabled>Stake</button>
-                <button id="btn-unstake" class="btn" disabled>Unstake</button>
-                <button id="btn-harvest" class="btn" disabled>Harvest</button>
+            <div class="stat-row">
+                <span>Staked:</span>
+                <span id="stake-bal" class="stat-value">0</span>
             </div>
         </div>
 
@@ -212,17 +196,145 @@
         // ЭЛЕМЕНТЫ
         const btnConnect = document.getElementById("btn-connect");
         const btnMint = document.getElementById("btn-mint");
-        const btnStake = document.getElementById("btn-stake");
-        const btnView = document.getElementById("btn-view");
-
-        // Кнопки стейкинга
-        const btnApprove = document.getElementById("btn-approve");
-        const btnStakeStaking = document.getElementById("btn-stake"); // Исправлено имя для стейкинга
-        const btnUnstake = document.getElementById("btn-unstake");
-        const btnHarvest = document.getElementById("btn-harvest");
+        const btnViewWallet = document.getElementById("btn-view-wallet");
+        const btnStakeSingle = document.getElementById("btn-stake-single"); // Новая кнопка стейка
 
         const txtAddr = document.getElementById("user-addr");
         const txtLog = document.getElementById("status-log");
 
         function log(msg) {
-            const time =
+            const time = new Date().toLocaleTimeString();
+            txtLog.innerHTML = `<div>[${time}] ${msg}</div>` + txtLog.innerHTML;
+        }
+
+        async function connectWallet() {
+            try {
+                const provider = window.unisat || window.opnet;
+                
+                if (!provider) {
+                    alert("Please install UniSat or OP Wallet extension!");
+                    log("Error: Wallet extension not found");
+                    return;
+                }
+
+                log("Connecting to wallet...");
+                const accounts = await provider.requestAccounts();
+                const account = accounts[0];
+
+                // Обновляем UI
+                txtAddr.innerText = account.slice(0, 10) + "..." + account.slice(-8);
+                btnConnect.innerText = "Connected ✓";
+                btnConnect.disabled = true;
+                
+                // Включаем кнопки
+                btnStakeSingle.disabled = false;
+                btnViewWallet.disabled = false;
+
+                // Проверка владельца
+                if (account.toLowerCase() === OWNER_ADDR.toLowerCase()) {
+                    btnMint.disabled = false;
+                    log("Welcome Owner! 🐾 Minting enabled.");
+                } else {
+                    log("Connected successfully!");
+                }
+
+                // Сбрасываем балансы до 0, как в примере
+                document.getElementById("btc-bal").innerText = "0";
+                document.getElementById("yara-bal").innerText = "0";
+                document.getElementById("stake-bal").innerText = "0";
+
+            } catch (err) {
+                console.error(err);
+                log("Connection failed: " + err.message);
+                // Сброс состояния
+                btnConnect.innerText = "Connect Wallet";
+                btnConnect.disabled = false;
+                btnStakeSingle.disabled = true;
+                btnViewWallet.disabled = true;
+                btnMint.disabled = true;
+            }
+        }
+
+        // Минтинг (owner) - симуляция
+        async function mintToken() {
+            try {
+                const provider = window.unisat || window.opnet;
+                log("Requesting Mint transaction...");
+                let current = parseFloat(document.getElementById("yara-bal").innerText);
+                document.getElementById("yara-bal").innerText = (current + 10).toFixed(2);
+                alert("✅ Mint successful! +10 YARA added.");
+                log("Minted 10 YARA tokens");
+            } catch (err) {
+                log("Mint failed: " + err.message);
+            }
+        }
+
+        // Стейкинг (симуляция - одна кнопка)
+        async function stakeYaraSingle() {
+            try {
+                const provider = window.unisat || window.opnet;
+                log("Initiating Stake YARA operation...");
+
+                if (!btnConnect.disabled || !provider) { 
+                    alert("Please connect your wallet first.");
+                    log("Wallet not connected for staking.");
+                    return;
+                }
+
+                // Симуляция стейкинга
+                alert("Stake YARA operation simulated. (+ YARA to staked balance)");
+                
+                let currentYara = parseFloat(document.getElementById("yara-bal").innerText);
+                let currentStaked = parseFloat(document.getElementById("stake-bal").innerText);
+
+                // Симулируем стейк 50 YARA
+                const amountToStake = Math.min(50, currentYara);
+                
+                document.getElementById("yara-bal").innerText = (currentYara - amountToStake).toFixed(2);
+                document.getElementById("stake-bal").innerText = (currentStaked + amountToStake).toFixed(2);
+                
+                log(`Staked ${amountToStake} YARA (simulated)`);
+            } catch (err) {
+                console.error(err);
+                log("Stake operation failed: " + err.message);
+            }
+        }
+
+        // View Wallet (симуляция)
+        async function viewWallet() {
+            log("Viewing wallet details (simulation)...");
+            try {
+                const provider = window.unisat || window.opnet;
+                if (!provider || btnConnect.disabled !== true) { 
+                    alert("Please connect your wallet first.");
+                    log("Wallet not connected for viewing details.");
+                    return;
+                }
+                const accounts = await provider.getAccounts();
+                const account = accounts[0];
+                
+                // Симуляция получения случайных балансов (YARA растет, BTC/Staked остаются 0, как в примере)
+                const yaraBalance = (Math.random() * 100) + 5; // YARA немного растет для демонстрации
+                
+                document.getElementById("user-addr").innerText = account.slice(0, 10) + "..." + account.slice(-8);
+                document.getElementById("yara-bal").innerText = yaraBalance.toFixed(2);
+
+                log(`Wallet details updated.`);
+                alert("Wallet details refreshed.");
+            } catch (err) {
+                console.error(err);
+                log("Failed to view wallet details: " + err.message);
+            }
+        }
+
+        // Привязка обработчиков событий к кнопкам
+        btnConnect.addEventListener("click", connectWallet);
+        btnMint.addEventListener("click", mintToken);
+        btnStakeSingle.addEventListener("click", stakeYaraSingle); // Привязка новой кнопки стейка
+        btnViewWallet.addEventListener("click", viewWallet);
+
+        // Инициализация лога при загрузке страницы
+        log("🐾 Pill Bank ready - all systems online"); // Соответствует вашему логу
+    </script>
+</body>
+</html>
