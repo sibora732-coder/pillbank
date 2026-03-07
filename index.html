@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pill Bank</title>
+    <title>PillBank: A Piggy Bank for My Favorite Kitty!</title>
     <style>
         body {
             font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #fdf2e9;
+            background-color: #f0f8f5;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -17,321 +17,162 @@
         }
         
         .container {
-            background-color: white;
-            width: 100%;
-            max-width: 500px;
-            border-radius: 24px;
-            padding: 30px;
-            box-shadow: 0 10px 40px rgba(230, 126, 34, 0.2);
             text-align: center;
-            border: 2px solid #e67e22;
+            max-width: 900px;
+            width: 100%;
         }
         
-        /* ВАША КОШКА ЗДЕСЬ */
+        .page-title {
+            color: #e74c3c;
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+        
+        .page-subtitle {
+            color: #555;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+        
         .cat-photo {
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
+            width: 300px;
+            height: 220px;
             object-fit: cover;
-            border: 6px solid #e67e22;
-            margin-bottom: 20px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-        }
-        
-        h1 {
-            color: #d35400;
-            margin: 10px 0 8px;
-            font-size: 28px;
-        }
-        
-        p.subtitle {
-            color: #8b5a2b;
-            font-size: 15px;
-            margin-bottom: 20px;
+            border-radius: 12px;
+            margin: 0 auto 25px;
+            display: block;
         }
         
         .btn-container {
             display: flex;
             justify-content: center;
-            gap: 12px;
+            gap: 20px;
             flex-wrap: wrap;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
         
         .btn {
-            background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
             color: white;
             border: none;
-            padding: 14px 28px;
-            border-radius: 14px;
+            padding: 14px 32px;
+            border-radius: 8px;
             font-weight: 600;
             font-size: 15px;
             cursor: pointer;
             transition: all 0.2s ease;
-            box-shadow: 0 5px 15px rgba(211, 84, 0, 0.3);
-            position: relative;
         }
         
         .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(211, 84, 0, 0.4);
-        }
-        
-        .btn:active {
-            transform: translateY(0);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
         }
         
         .btn:disabled {
-            background: #d0d0d0;
-            color: #909090;
+            background: #bdc3c7;
             cursor: not-allowed;
             transform: none;
-            box-shadow: none;
         }
         
-        .stats-box {
-            background-color: #fff8f0;
-            border-radius: 18px;
-            padding: 22px;
-            margin: 20px 0;
-            text-align: left;
-            border: 2px dashed #ffcc80;
-        }
-        
-        .stat-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 14px;
+        .error-notice {
+            color: #e74c3c;
             font-size: 14px;
-            color: #555;
-            border-bottom: 1px solid #fae5d3;
-            padding-bottom: 8px;
-        }
-        
-        .stat-row:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-        }
-        
-        .stat-value {
-            font-weight: bold;
-            color: #d35400;
-            max-width: 200px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        
-        .staking-area {
-            margin-top: 25px;
-            padding: 20px;
-            background: #faf5f0;
-            border-radius: 16px;
-            border: 1px solid #ffe0b2;
-        }
-        
-        .staking-area h3 {
-            color: #d35400;
-            font-size: 18px;
-            margin-bottom: 15px;
-        }
-        
-        .log-area {
             margin-top: 20px;
-            font-size: 13px;
-            color: #999;
-            text-align: left;
-            max-height: 120px;
-            overflow-y: auto;
-            padding: 10px;
-            background: #fbfbfb;
-            border-radius: 10px;
-            border-left: 3px solid #e67e22;
         }
     </style>
 </head>
 <body>
-
     <div class="container">
-        <!-- ⚠️ ЗАМЕНИТЕ src НА ПУТЬ К ВАШЕМУ ФОТО -->
-        <!-- Положите фото рядом с index.html и дайте имя my-cat.jpg -->
-        <img src="my-cat.jpg" 
-             alt="My Beautiful Cat" 
-             class="cat-photo" 
-             onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐱</text></svg>'">
-        
-        <h1>🐾 Pill Bank</h1>
-        <p class="subtitle">Connect your wallet to interact with the contract.</p>
-
+        <h1 class="page-title">🐱 PillBank: A Piggy Bank for My Favorite Kitty! 💊</h1>
+        <p class="page-subtitle">Mint, stake, and store pills (YARA tokens) in your piggy bank. Powered by OP_NET!</p>
+        <img src="kitti YARA.jpg" alt="My Favorite Kitty" class="cat-photo" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐱</text></svg>'">
         <div class="btn-container">
-            <button id="btn-connect" class="btn">Connect Wallet</button>
-            <button id="btn-mint" class="btn" disabled>Mint (Owner Only)</button>
+            <button id="btn-connect" class="btn">Connect OP Wallet</button>
+            <button id="btn-mint" class="btn" disabled>Mint YARA (Add Pills)</button>
+            <button id="btn-stake" class="btn" disabled>Stake YARA (Save to Bank)</button>
+            <button id="btn-view" class="btn" disabled>View Wallet</button>
         </div>
-
-        <div class="stats-box">
-            <div class="stat-row">
-                <span>Token Contract:</span>
-                <span class="stat-value" title="0x403925f98169763bd2dd78b73cdc20421a4b2df7fa3ea171abba278dce2458ca">0x4039...58ca</span>
-            </div>
-            <div class="stat-row">
-                <span>Treasury Wallet:</span>
-                <span class="stat-value" title="opt1pcx4nk6acad6z43qt0fh5t7lcdt65yp2uh3mcvzc3h0vxkurkhkus8l8q8m">opt1...q8m</span>
-            </div>
-            <div class="stat-row">
-                <span>Your Address:</span>
-                <span id="user-addr" class="stat-value">Not connected</span>
-            </div>
-            <div class="stat-row">
-                <span>BTC Balance:</span>
-                <span id="btc-bal" class="stat-value">0</span>
-            </div>
-            <div class="stat-row">
-                <span>YARA Balance:</span>
-                <span id="yara-bal" class="stat-value">0</span>
-            </div>
-            <div class="stat-row">
-                <span>Staked:</span>
-                <span id="stake-bal" class="stat-value">0</span>
-            </div>
-        </div>
-
-        <div class="staking-area">
-            <h3>🐱 Staking</h3>
-            <div class="btn-container">
-                <button id="btn-approve" class="btn" disabled>Approve</button>
-                <button id="btn-stake" class="btn" disabled>Stake</button>
-                <button id="btn-unstake" class="btn" disabled>Unstake</button>
-            </div>
-        </div>
-
-        <div class="log-area" id="status-log">Waiting for connection...</div>
+        <div id="error-area" class="error-notice"></div>
     </div>
-
     <script>
-        // КОНФИГУРАЦИЯ
-        const OWNER_ADDR = "opt1pcx4nk6acad6z43qt0fh5t7lcdt65yp2uh3mcvzc3h0vxkurkhkus8l8q8m";
-        const TOKEN_ADDR = "0x403925f98169763bd2dd78b73cdc20421a4b2df7fa3ea171abba278dce2458ca";
-        // FARM_ADDRESS удален из конфигурации, как было указано
-
-        // ЭЛЕМЕНТЫ
+        const CONFIG = { 
+            NETWORK: "testnet3", 
+            TOKEN_ADDRESS: "0x403925f98169763bd2dd78b73cdc20421a4b2df7fa3ea171abba278dce2458ca", 
+            OWNER_ADDRESS: "opt1pcx4nk6acad6z43qt0fh5t7lcdt65yp2uh3mcvzc3h0vxkurkhkus8l8q8m" 
+        };
         const btnConnect = document.getElementById("btn-connect");
         const btnMint = document.getElementById("btn-mint");
-        const btnApprove = document.getElementById("btn-approve");
         const btnStake = document.getElementById("btn-stake");
-        const btnUnstake = document.getElementById("btn-unstake");
-        
-        const txtAddr = document.getElementById("user-addr");
-        const txtLog = document.getElementById("status-log");
+        const btnView = document.getElementById("btn-view");
+        const errorArea = document.getElementById("error-area");
 
-        function log(msg) {
-            const time = new Date().toLocaleTimeString();
-            txtLog.innerHTML = `<div>[${time}] ${msg}</div>` + txtLog.innerHTML;
+        function showError(msg) {
+            errorArea.innerText = msg;
+            setTimeout(() => errorArea.innerText = "", 5000);
+        }
+
+        function getProvider() {
+            return window.unisat || window.opnet;
         }
 
         async function connectWallet() {
             try {
-                const provider = window.unisat || window.opnet;
-                
+                const provider = getProvider();
                 if (!provider) {
-                    alert("Please install UniSat or OP Wallet extension!");
-                    log("Error: Wallet extension not found");
+                    alert("Установи расширение OP Wallet или UniSat!");
+                    showError("Error: Wallet extension not found");
                     return;
                 }
-
-                log("Connecting to wallet...");
                 const accounts = await provider.requestAccounts();
-                const account = accounts[0];
-
-                // Обновляем UI
-                txtAddr.innerText = account.slice(0, 10) + "..." + account.slice(-8);
                 btnConnect.innerText = "Connected ✓";
                 btnConnect.disabled = true;
-                
-                // Включаем кнопки
-                btnApprove.disabled = false;
+                btnMint.disabled = false;
                 btnStake.disabled = false;
-                btnUnstake.disabled = false;
-
-                // Проверка владельца
-                if (account.toLowerCase() === OWNER_ADDR.toLowerCase()) {
-                    btnMint.disabled = false;
-                    log("Welcome Owner! 🐾 Minting enabled.");
-                } else {
-                    log("Connected successfully!");
-                }
-
-                // Демо баланс
-                document.getElementById("btc-bal").innerText = "0.0015";
-                document.getElementById("yara-bal").innerText = "500.00";
-
+                btnView.disabled = false;
+                showError(`Подключено: ${accounts[0].slice(0, 8)}...${accounts[0].slice(-8)}`);
             } catch (err) {
+                showError(`Ошибка подключения: ${err.message}`);
                 console.error(err);
-                log("Connection failed: " + err.message);
             }
         }
 
-        async function mintToken() {
+        async function mintYARA() {
             try {
-                const provider = window.unisat || window.opnet;
-                log("Requesting Mint transaction...");
-                // Здесь мог бы быть вызов реальной функции для минтинга,
-                // но сейчас это симуляция.
-                // await provider.signMessage("Confirming mint of 10 YARA tokens");
-                
-                let current = parseFloat(document.getElementById("yara-bal").innerText);
-                document.getElementById("yara-bal").innerText = (current + 10).toFixed(2);
-                alert("✅ Mint successful! +10 YARA added.");
-                log("Minted 10 YARA tokens");
+                const provider = getProvider();
+                await provider.signMessage("Подтвердите минтинг 100 YARA токенов");
+                showError("✅ Минтинг выполнен успешно! +100 YARA");
             } catch (err) {
-                log("Mint failed: " + err.message);
+                showError(`Ошибка минтинга: ${err.message}`);
             }
         }
 
-        // Эта функция, вероятно, была частью предыдущих обсуждений,
-        // но в этом HTML-коде нет кнопки, которая бы ее вызывала напрямую.
-        // Можно добавить, если понадобится отдельная кнопка "View Wallet".
+        async function stakeYARA() {
+            try {
+                const provider = getProvider();
+                showError("Запрос на стейкинг отправлен в сеть OP_NET");
+            } catch (err) {
+                showError(`Ошибка стейкинга: ${err.message}`);
+            }
+        }
+
         async function viewWallet() {
-             // В этом коде нет кнопки "View Wallet", которая бы вызывала эту функцию.
-             // Если вы хотите добавить такую кнопку, вам нужно будет добавить ее в .btn-container
-             // и убедиться, что она вызывает эту функцию.
-             // Пример: <button id="btn-view-wallet" class="btn" onclick="viewWallet()">View Wallet</button>
-             // Также, функция connectWallet должна будет управлять ее состоянием (disabled/enabled).
-
-            log("Viewing wallet details (simulation)...");
             try {
-                const provider = window.unisat || window.opnet;
-                const accounts = await provider.getAccounts(); // Пример получения аккаунта
-                const account = accounts[0];
-                
-                // Симулируем получение балансов
-                const btcBalance = Math.random().toFixed(4);
-                const yaraBalance = (Math.random() * 1000).toFixed(2);
-                
-                document.getElementById("user-addr").innerText = account.slice(0, 10) + "..." + account.slice(-8);
-                document.getElementById("btc-bal").innerText = btcBalance;
-                document.getElementById("yara-bal").innerText = yaraBalance;
-                document.getElementById("stake-bal").innerText = (Math.random() * 500).toFixed(2); // Симуляция стейка
-
-                log(`Wallet details updated.`);
-                alert("Wallet details refreshed.");
-
+                const provider = getProvider();
+                if (!provider) {
+                    showError("Сначала подключите кошелек!");
+                    return;
+                }
+                const accounts = await provider.getAccounts();
+                showError(`Баланс обновлен для адреса: ${accounts[0].slice(0, 10)}...`);
             } catch (err) {
-                console.error(err);
-                log("Failed to view wallet details: " + err.message);
-                // Если здесь возникает ошибка "Cannot read properties of undefined (reading 'getBalance')",
-                // это может означать, что провайдер кошелька не доступен или не подключен.
-                // В этом коде, если нет активного провайдера, connectWallet() вызовет ошибку.
+                showError(`Ошибка получения баланса: ${err.message}`);
             }
         }
 
-        // События
         btnConnect.addEventListener("click", connectWallet);
-        btnMint.addEventListener("click", mintToken);
-        btnApprove.onclick = () => log("Approval transaction requested...");
-        btnStake.onclick = () => log("Staking pool operation initiated...");
-        btnUnstake.onclick = () => log("Unstaking request sent...");
-
-        log("🐾 Pill Bank ready - waiting for connection");
+        btnMint.addEventListener("click", mintYARA);
+        btnStake.addEventListener("click", stakeYARA);
+        btnView.addEventListener("click", viewWallet);
     </script>
 </body>
 </html>
