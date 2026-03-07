@@ -1,266 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pill Bank</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #fdf2e9; /* Персиковый фон */
+            font-family: "Segoe UI", sans-serif;
+            background: #f8e8d6;
+            margin: 0;
+            padding: 20px;
             display: flex;
             justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
         }
-
-        .container {
-            background-color: white;
+        .app {
+            max-width: 520px;
             width: 100%;
-            max-width: 480px;
-            border-radius: 24px;
+            background: #fff;
+            border-radius: 20px;
             padding: 30px;
-            box-shadow: 0 10px 40px rgba(230, 126, 34, 0.2);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             text-align: center;
-            border: 1px solid #fae5d3;
         }
-
-        /* КОШКА ЗДЕСЬ */
-        .cat-photo {
-            width: 150px;
-            height: 150px;
+        .cat-avatar {
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
             object-fit: cover;
-            border: 5px solid #e67e22;
             margin-bottom: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: 3px solid #f8e8d6;
         }
-
         h1 {
+            margin: 0 0 10px;
             color: #d35400;
-            margin: 10px 0 5px;
-            font-size: 28px;
+            font-size: 1.8rem;
         }
-
-        p.subtitle {
-            color: #888;
-            font-size: 14px;
-            margin-bottom: 25px;
-        }
-
-        .btn {
-            background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 15px;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            margin: 5px;
-            box-shadow: 0 4px 10px rgba(211, 84, 0, 0.3);
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(211, 84, 0, 0.4);
-        }
-
-        .btn:disabled {
-            background: #e0e0e0;
-            color: #a0a0a0;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .stats-box {
-            background-color: #fff8f0;
-            border-radius: 16px;
-            padding: 20px;
-            margin: 20px 0;
+        .stat-grid {
             text-align: left;
-            border: 1px dashed #e67e22;
-        }
-
-        .stat-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 12px;
+            background: #fff3e0;
+            border-radius: 15px;
+            padding: 15px;
+            margin: 20px 0;
             font-size: 14px;
-            color: #555;
-            border-bottom: 1px solid #fae5d3;
-            padding-bottom: 8px;
         }
-
-        .stat-row:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
+        .stat-grid p {
+            margin: 5px 0;
+            word-break: break-all;
         }
-
-        .stat-value {
-            font-weight: bold;
-            color: #d35400;
-            max-width: 150px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+        .btn {
+            display: inline-block;
+            margin: 5px;
+            padding: 10px 20px;
+            font-size: 14px;
+            border: none;
+            border-radius: 10px;
+            background: #e67e22;
+            color: #fff;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: 600;
         }
-
-        .staking-area {
+        .btn:hover { background: #d35400; }
+        .btn:disabled { background: #c7c7c7; cursor: not-allowed; }
+        #status {
             margin-top: 20px;
-        }
-
-        .staking-area h3 {
-            color: #d35400;
-            font-size: 18px;
-            margin-bottom: 15px;
-        }
-
-        .log-area {
-            margin-top: 20px;
-            font-size: 12px;
-            color: #999;
-            text-align: center;
+            text-align: left;
+            font-size: 13px;
+            color: #666;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
         }
     </style>
 </head>
 <body>
-
-    <div class="container">
-        <!-- ФОТО КОШКИ ВОЗВРАЩЕНО -->
-        <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Beautiful Cat" class="cat-photo">
+    <div class="app">
+        <!-- Твой котик -->
+        <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=200&q=80" class="cat-avatar" alt="Cat">
         
         <h1>🐾 Pill Bank</h1>
-        <p class="subtitle">Connect wallet to interact with the contract</p>
+        <p>Connect your wallet to interact with the contract.</p>
 
         <div>
-            <button id="btn-connect" class="btn">Connect Wallet</button>
-            <button id="btn-mint" class="btn" disabled>Mint (Owner)</button>
+            <button id="connect-btn" class="btn">Connect Wallet</button>
+            <button id="mint-btn" class="btn" disabled>Mint (Owner Only)</button>
         </div>
 
-        <div class="stats-box">
-            <div class="stat-row">
-                <span>Token Contract:</span>
-                <span class="stat-value" title="0x403925f98169763bd2dd78b73cdc20421a4b2df7fa3ea171abba278dce2458ca">0x4039...58ca</span>
-            </div>
-            <div class="stat-row">
-                <span>Treasury:</span>
-                <span class="stat-value" title="opt1pcx4nk6acad6z43qt0fh5t7lcdt65yp2uh3mcvzc3h0vxkurkhkus8l8q8m">opt1...q8m</span>
-            </div>
-            <div class="stat-row">
-                <span>Your Address:</span>
-                <span id="user-addr" class="stat-value">Not connected</span>
-            </div>
-            <div class="stat-row">
-                <span>BTC Balance:</span>
-                <span id="btc-bal" class="stat-value">0</span>
-            </div>
-            <div class="stat-row">
-                <span>YARA Balance:</span>
-                <span id="yara-bal" class="stat-value">0</span>
-            </div>
-            <div class="stat-row">
-                <span>Staked:</span>
-                <span id="stake-bal" class="stat-value">0</span>
-            </div>
+        <div class="stat-grid">
+            <p><strong>Token Contract:</strong><br> 0x403925f98169763bd2dd78b73cdc20421a4b2df7fa3ea171abba278dce2458ca</p>
+            <p><strong>Treasury Wallet:</strong><br> opt1pcx4nk6acad6z43qt0fh5t7lcdt65yp2uh3mcvzc3h0vxkurkhkus8l8q8m</p>
+            <p><strong>Your Address:</strong> <span id="wallet-address">Not connected</span></p>
+            <p><strong>BTC Balance:</strong> <span id="btc-balance">0</span></p>
+            <p><strong>YARA Balance:</strong> <span id="yara-balance">0</span></p>
+            <p><strong>Staked:</strong> <span id="staked-balance">0</span></p>
         </div>
 
-        <div class="staking-area">
-            <h3>🐱 Staking Farm</h3>
-            <button id="btn-approve" class="btn" disabled>Approve</button>
-            <button id="btn-stake" class="btn" disabled>Stake</button>
-            <button id="btn-unstake" class="btn" disabled>Unstake</button>
+        <div>
+            <h3>🐱 Staking</h3>
+            <button id="approve-btn" class="btn" disabled>Approve</button>
+            <button id="stake-btn" class="btn" disabled>Stake</button>
+            <button id="unstake-btn" class="btn" disabled>Unstake</button>
         </div>
 
-        <div class="log-area" id="status-log">Waiting for connection...</div>
+        <div id="status">Ready to connect...</div>
     </div>
 
-    <script>
-        // CONFIG
-        const OWNER_ADDR = "opt1pcx4nk6acad6z43qt0fh5t7lcdt65yp2uh3mcvzc3h0vxkurkhkus8l8q8m";
-        const TOKEN_ADDR = "0x403925f98169763bd2dd78b73cdc20421a4b2df7fa3ea171abba278dce2458ca";
-
-        // ELEMENTS
-        const btnConnect = document.getElementById("btn-connect");
-        const btnMint = document.getElementById("btn-mint");
-        const btnApprove = document.getElementById("btn-approve");
-        const btnStake = document.getElementById("btn-stake");
-        const btnUnstake = document.getElementById("btn-unstake");
-        
-        const txtAddr = document.getElementById("user-addr");
-        const txtStatus = document.getElementById("status-log");
-
-        function setStatus(msg) {
-            txtStatus.innerText = msg;
-        }
-
-        async function connectWallet() {
-            try {
-                // Check providers
-                const provider = window.unisat || window.opnet;
-                if (!provider) {
-                    alert("Please install UniSat Wallet!");
-                    return;
-                }
-
-                setStatus("Connecting...");
-                const accounts = await provider.requestAccounts();
-                const account = accounts[0];
-
-                // Update UI
-                txtAddr.innerText = account.slice(0, 6) + "..." + account.slice(-6);
-                btnConnect.innerText = "Connected";
-                btnConnect.disabled = true;
-                
-                // Enable actions
-                btnApprove.disabled = false;
-                btnStake.disabled = false;
-                btnUnstake.disabled = false;
-
-                // Check Admin
-                if (account.toLowerCase() === OWNER_ADDR.toLowerCase()) {
-                    btnMint.disabled = false;
-                    setStatus("Owner connected. Minting enabled.");
-                } else {
-                    setStatus("Connected successfully.");
-                }
-
-                // Mock Data (Simulated)
-                document.getElementById("btc-bal").innerText = "0.0045";
-                document.getElementById("yara-bal").innerText = "150.00";
-
-            } catch (err) {
-                console.error(err);
-                setStatus("Error: " + err.message);
-            }
-        }
-
-        async function mintToken() {
-            try {
-                const provider = window.unisat || window.opnet;
-                setStatus("Signing Mint Transaction...");
-                await provider.signMessage("Mint 10 YARA");
-                
-                let current = parseFloat(document.getElementById("yara-bal").innerText);
-                document.getElementById("yara-bal").innerText = (current + 10).toFixed(2);
-                alert("Mint Success!");
-                setStatus("Minted 10 YARA");
-            } catch (err) {
-                setStatus("Mint failed: " + err.message);
-            }
-        }
-
-        // LISTENERS
-        btnConnect.addEventListener("click", connectWallet);
-        btnMint.addEventListener("click", mintToken);
-        
-        btnApprove.onclick = () => setStatus("Approve transaction sent...");
-        btnStake.onclick = () => setStatus("Staking...");
-        btnUnstake.onclick = () => setStatus("Unstaking...");
-
-    </script>
+    <script src="CatBank.js"></script>
 </body>
 </html>
