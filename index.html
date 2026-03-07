@@ -1,16 +1,92 @@
-
+<!DOCTYPE html>
+<html lang="ru">
 <head>
-    <title>Pill Bank</title>
-    <!-- Тут только стили и мета-теги -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pill Bank (YARA)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8e8d6; /* Цвет кошачьего пузика */
+            color: #333;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        h1 { color: #d35400; }
+        .stats {
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        .btn {
+            background-color: #e67e22;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+            transition: background 0.3s;
+        }
+        .btn:hover { background-color: #d35400; }
+        .btn:disabled { background-color: #ccc; cursor: not-allowed; }
+        #status {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+            max-height: 100px;
+            overflow-y: auto;
+            text-align: left;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+    </style>
 </head>
 <body>
-    <!-- Весь ваш HTML (кнопки, картинки) -->
+
     <div class="container">
-        ...
-        <button id="connect-btn">Connect Wallet</button>
-        ...
+        <h1>🐱 Pill Bank (YARA)</h1>
+        <p>Добро пожаловать в кошачий банк!</p>
+
+        <!-- КНОПКИ -->
+        <div>
+            <button id="connect-btn" class="btn">Connect Wallet</button>
+            <button id="mint-btn" class="btn" disabled>Mint YARA (Owner)</button>
+        </div>
+
+        <!-- СТАТИСТИКА -->
+        <div class="stats">
+            <p><strong>Address:</strong> <span id="wallet-address">Not connected</span></p>
+            <p><strong>BTC Balance:</strong> <span id="btc-balance">0</span></p>
+            <p><strong>YARA Balance:</strong> <span id="yara-balance">0</span></p>
+            <p><strong>Staked:</strong> <span id="staked-balance">0</span></p>
+        </div>
+
+        <!-- СТЕЙКИНГ (Ферма) -->
+        <div style="border-top: 2px dashed #eee; padding-top: 20px;">
+            <h3>🚜 Staking Farm</h3>
+            <button id="approve-btn" class="btn" disabled>Approve</button>
+            <button id="stake-btn" class="btn" disabled>Stake</button>
+            <button id="unstake-btn" class="btn" disabled>Unstake</button>
+        </div>
+
+        <!-- ЛОГИ (Ошибки и статусы) -->
+        <div id="status"></div>
     </div>
 
-    <!-- 👇 ВСТАВЬТЕ СКРИПТ СЮДА, ПЕРЕД САМЫМ КОНЦОМ 👇 -->
+    <!-- 👇 ВАЖНО: Скрипт подключаем в самом низу! 👇 -->
     <script src="CatBank.js"></script>
+
 </body>
+</html>
