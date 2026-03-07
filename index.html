@@ -1,13 +1,14 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PillBank: A Piggy Bank for My Favorite Kitty!</title>
+    <title>Pill Bank</title>
     <style>
         body {
             font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f8f5;
+            background-color: #fdf2e9;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -17,162 +18,394 @@
         }
         
         .container {
-            text-align: center;
-            max-width: 900px;
+            background-color: white;
             width: 100%;
-        }
-        
-        .page-title {
-            color: #e74c3c;
-            font-size: 32px;
-            margin-bottom: 15px;
-        }
-        
-        .page-subtitle {
-            color: #555;
-            font-size: 16px;
-            margin-bottom: 30px;
+            max-width: 520px;
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(230, 126, 34, 0.2);
+            text-align: center;
+            border: 2px solid #e67e22;
         }
         
         .cat-photo {
-            width: 300px;
-            height: 220px;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
             object-fit: cover;
-            border-radius: 12px;
-            margin: 0 auto 25px;
-            display: block;
+            border: 6px solid #e67e22;
+            margin-bottom: 20px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        
+        h1 {
+            color: #d35400;
+            margin: 10px 0 8px;
+            font-size: 28px;
+        }
+        
+        p.subtitle {
+            color: #8b5a2b;
+            font-size: 15px;
+            margin-bottom: 20px;
         }
         
         .btn-container {
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 12px;
             flex-wrap: wrap;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
         
         .btn {
-            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
             color: white;
             border: none;
-            padding: 14px 32px;
-            border-radius: 8px;
+            padding: 14px 28px;
+            border-radius: 14px;
             font-weight: 600;
             font-size: 15px;
             cursor: pointer;
             transition: all 0.2s ease;
+            box-shadow: 0 5px 15px rgba(211, 84, 0, 0.3);
+            position: relative;
         }
         
         .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(211, 84, 0, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
         }
         
         .btn:disabled {
-            background: #bdc3c7;
+            background: #d0d0d0;
+            color: #909090;
             cursor: not-allowed;
             transform: none;
+            box-shadow: none;
         }
         
-        .error-notice {
-            color: #e74c3c;
+        .stats-box {
+            background-color: #fff8f0;
+            border-radius: 18px;
+            padding: 22px;
+            margin: 20px 0;
+            text-align: left;
+            border: 2px dashed #ffcc80;
+        }
+        
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 14px;
             font-size: 14px;
+            color: #555;
+            border-bottom: 1px solid #fae5d3;
+            padding-bottom: 8px;
+        }
+        
+        .stat-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            color: #d35400;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .log-area {
             margin-top: 20px;
+            font-size: 13px;
+            color: #999;
+            text-align: left;
+            max-height: 160px;
+            overflow-y: auto;
+            padding: 10px;
+            background: #fbfbfb;
+            border-radius: 10px;
+            border-left: 3px solid #e67e22;
+        }
+        
+        /* БЛОК STAKING с 4 кнопками */
+        .staking-area {
+            margin-top: 25px;
+            padding: 20px;
+            background: #faf5f0;
+            border-radius: 16px;
+            border: 1px solid #ffe0b2;
+        }
+        
+        .staking-area h3 {
+            color: #d35400;
+            font-size: 18px;
+            margin-bottom: 15px;
         }
     </style>
 </head>
 <body>
+
     <div class="container">
-        <h1 class="page-title">🐱 PillBank: A Piggy Bank for My Favorite Kitty! 💊</h1>
-        <p class="page-subtitle">Mint, stake, and store pills (YARA tokens) in your piggy bank. Powered by OP_NET!</p>
-        <img src="kitti YARA.jpg" alt="My Favorite Kitty" class="cat-photo" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐱</text></svg>'">
+        <!-- Изображение: kitti YARA.jpg -->
+        <img src="kitti YARA.jpg" 
+             alt="My Beautiful Cat" 
+             class="cat-photo" 
+             onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐱</text></svg>'">
+        
+        <h1>🐾 Pill Bank</h1>
+        <p class="subtitle">Connect your wallet to interact with the contract.</p>
+
         <div class="btn-container">
-            <button id="btn-connect" class="btn">Connect OP Wallet</button>
-            <button id="btn-mint" class="btn" disabled>Mint YARA (Add Pills)</button>
-            <button id="btn-stake" class="btn" disabled>Stake YARA (Save to Bank)</button>
-            <button id="btn-view" class="btn" disabled>View Wallet</button>
+            <!-- ИСПРАВЛЕНЫ НАЗВАНИЯ -->
+            <button id="btn-connect" class="btn">Connect Wallet</button>
+            <button id="btn-mint" class="btn" disabled>Mint (Owner Only)</button>
+            <button id="btn-view-wallet" class="btn" onclick="viewWallet()" disabled>View Wallet</button>
         </div>
-        <div id="error-area" class="error-notice"></div>
+
+        <div class="stats-box">
+            <div class="stat-row">
+                <span>Token Contract:</span>
+                <span class="stat-value" title="0x403925f98169763bd2dd78b73cdc20421a4b2df7fa3ea171abba278dce2458ca">0x4039...58ca</span>
+            </div>
+            <div class="stat-row">
+                <span>Treasury Wallet:</span>
+                <span class="stat-value" title="opt1pcx4nk6acad6z43qt0fh5t7lcdt65yp2uh3mcvzc3h0vxkurkhkus8l8q8m">opt1...q8m</span>
+            </div>
+            <div class="stat-row">
+                <span>Your Address:</span>
+                <span id="user-addr" class="stat-value">Not connected</span>
+            </div>
+            <div class="stat-row">
+                <span>BTC Balance:</span>
+                <span id="btc-bal" class="stat-value">0</span>
+            </div>
+            <div class="stat-row">
+                <span>YARA Balance:</span>
+                <span id="yara-bal" class="stat-value">0</span>
+            </div>
+            <div class="stat-row">
+                <span>Staked:</span>
+                <span id="stake-bal" class="stat-value">0</span>
+            </div>
+        </div>
+
+        <!-- БЛОК STAKING с 4 кнопками -->
+        <div class="staking-area" id="staking-area">
+            <h3>🐱 Staking</h3>
+            <div class="btn-container">
+                <button id="btn-approve" class="btn" disabled>Approve</button>
+                <button id="btn-stake" class="btn" disabled>Stake</button>
+                <button id="btn-unstake" class="btn" disabled>Unstake</button>
+                <button id="btn-harvest" class="btn" disabled>Harvest</button>
+            </div>
+        </div>
+
+        <div class="log-area" id="status-log">Waiting for connection...</div>
     </div>
+
     <script>
-        const CONFIG = { 
-            NETWORK: "testnet3", 
-            TOKEN_ADDRESS: "0x403925f98169763bd2dd78b73cdc20421a4b2df7fa3ea171abba278dce2458ca", 
-            OWNER_ADDRESS: "opt1pcx4nk6acad6z43qt0fh5t7lcdt65yp2uh3mcvzc3h0vxkurkhkus8l8q8m" 
-        };
+        // КОНФИГУРАЦИЯ
+        const OWNER_ADDR = "opt1pcx4nk6acad6z43qt0fh5t7lcdt65yp2uh3mcvzc3h0vxkurkhkus8l8q8m";
+        const TOKEN_ADDR = "0x403925f98169763bd2dd78b73cdc20421a4b2df7fa3ea171abba278dce2458ca";
+
+        // ЭЛЕМЕНТЫ
         const btnConnect = document.getElementById("btn-connect");
         const btnMint = document.getElementById("btn-mint");
+        const btnViewWallet = document.getElementById("btn-view-wallet");
+
+        // Кнопки стейкинга
+        const btnApprove = document.getElementById("btn-approve");
         const btnStake = document.getElementById("btn-stake");
-        const btnView = document.getElementById("btn-view");
-        const errorArea = document.getElementById("error-area");
+        const btnUnstake = document.getElementById("btn-unstake");
+        const btnHarvest = document.getElementById("btn-harvest");
 
-        function showError(msg) {
-            errorArea.innerText = msg;
-            setTimeout(() => errorArea.innerText = "", 5000);
-        }
+        const txtAddr = document.getElementById("user-addr");
+        const txtLog = document.getElementById("status-log");
 
-        function getProvider() {
-            return window.unisat || window.opnet;
+        function log(msg) {
+            const time = new Date().toLocaleTimeString();
+            txtLog.innerHTML = `<div>[${time}] ${msg}</div>` + txtLog.innerHTML;
         }
 
         async function connectWallet() {
             try {
-                const provider = getProvider();
+                const provider = window.unisat || window.opnet;
+                
                 if (!provider) {
-                    alert("Установи расширение OP Wallet или UniSat!");
-                    showError("Error: Wallet extension not found");
+                    alert("Please install UniSat or OP Wallet extension!");
+                    log("Error: Wallet extension not found");
                     return;
                 }
+
+                log("Connecting to wallet...");
                 const accounts = await provider.requestAccounts();
+                const account = accounts[0];
+
+                // Обновляем UI
+                txtAddr.innerText = account.slice(0, 10) + "..." + account.slice(-8);
                 btnConnect.innerText = "Connected ✓";
                 btnConnect.disabled = true;
-                btnMint.disabled = false;
+                
+                // Включаем кнопки
+                btnApprove.disabled = false;
                 btnStake.disabled = false;
-                btnView.disabled = false;
-                showError(`Подключено: ${accounts[0].slice(0, 8)}...${accounts[0].slice(-8)}`);
+                btnUnstake.disabled = false;
+                btnHarvest.disabled = false;
+                btnViewWallet.disabled = false;
+
+                // Проверка владельца
+                if (account.toLowerCase() === OWNER_ADDR.toLowerCase()) {
+                    btnMint.disabled = false;
+                    log("Welcome Owner! 🐾 Minting enabled.");
+                } else {
+                    log("Connected successfully!");
+                }
+
+                // Балансы сбрасываются до 0 до вызова viewWallet
+                document.getElementById("btc-bal").innerText = "0";
+                document.getElementById("yara-bal").innerText = "0";
+                document.getElementById("stake-bal").innerText = "0";
+
             } catch (err) {
-                showError(`Ошибка подключения: ${err.message}`);
                 console.error(err);
+                log("Connection failed: " + err.message);
+                // Сброс состояния
+                btnConnect.innerText = "Connect Wallet";
+                btnConnect.disabled = false;
+                btnApprove.disabled = true;
+                btnStake.disabled = true;
+                btnUnstake.disabled = true;
+                btnHarvest.disabled = true;
+                btnViewWallet.disabled = true;
             }
         }
 
-        async function mintYARA() {
+        // Минтинг (owner) - симуляция
+        async function mintToken() {
             try {
-                const provider = getProvider();
-                await provider.signMessage("Подтвердите минтинг 100 YARA токенов");
-                showError("✅ Минтинг выполнен успешно! +100 YARA");
+                const provider = window.unisat || window.opnet;
+                log("Requesting Mint transaction...");
+                let current = parseFloat(document.getElementById("yara-bal").innerText);
+                document.getElementById("yara-bal").innerText = (current + 10).toFixed(2);
+                alert("✅ Mint successful! +10 YARA added.");
+                log("Minted 10 YARA tokens");
             } catch (err) {
-                showError(`Ошибка минтинга: ${err.message}`);
+                log("Mint failed: " + err.message);
             }
         }
 
-        async function stakeYARA() {
+        // Стейкинг (симуляция)
+        async function stakeYara() {
             try {
-                const provider = getProvider();
-                showError("Запрос на стейкинг отправлен в сеть OP_NET");
+                const provider = window.unisat || window.opnet;
+                log("Initiating Stake YARA operation...");
+
+                if (!btnConnect.disabled || !provider) { 
+                    alert("Please connect your wallet first.");
+                    log("Wallet not connected for staking.");
+                    return;
+                }
+
+                alert("Stake YARA operation simulated. (+ YARA to staked balance)");
+                
+                let currentStaked = parseFloat(document.getElementById("stake-bal").innerText);
+                document.getElementById("stake-bal").innerText = (currentStaked + 100).toFixed(2);
+                log("Staked YARA (simulated)");
             } catch (err) {
-                showError(`Ошибка стейкинга: ${err.message}`);
+                console.error(err);
+                log("Stake operation failed: " + err.message);
             }
         }
 
+        // Unstake (симуляция)
+        async function unstakeYara() {
+            try {
+                const provider = window.unisat || window.opnet;
+                log("Initiating Unstake YARA operation...");
+                if (!btnConnect.disabled || !provider) { 
+                    alert("Please connect your wallet first.");
+                    log("Wallet not connected for unstaking.");
+                    return;
+                }
+                let currentStaked = parseFloat(document.getElementById("stake-bal").innerText);
+                const newVal = Math.max(0, currentStaked - 50);
+                document.getElementById("stake-bal").innerText = newVal.toFixed(2);
+                log("Unstaked YARA (simulated)");
+            } catch (err) {
+                console.error(err);
+                log("Unstake failed: " + err.message);
+            }
+        }
+
+        // Harvest (получение наград - симуляция)
+        async function harvestRewards() {
+            try {
+                const provider = window.unisat || window.opnet;
+                log("Harvesting rewards...");
+                if (!btnConnect.disabled || !provider) { 
+                    alert("Please connect your wallet first.");
+                    log("Wallet not connected for harvesting.");
+                    return;
+                }
+                let currentYara = parseFloat(document.getElementById("yara-bal").innerText);
+                document.getElementById("yara-bal").innerText = (currentYara + 5).toFixed(2);
+                alert("✅ Rewards harvested! +5 YARA");
+                log("Harvested 5 YARA rewards");
+            } catch (err) {
+                console.error(err);
+                log("Harvest failed: " + err.message);
+            }
+        }
+
+        // View Wallet (симуляция)
         async function viewWallet() {
+            log("Viewing wallet details (simulation)...");
             try {
-                const provider = getProvider();
-                if (!provider) {
-                    showError("Сначала подключите кошелек!");
+                const provider = window.unisat || window.opnet;
+                if (!provider || btnConnect.disabled !== true) { 
+                    alert("Please connect your wallet first.");
+                    log("Wallet not connected for viewing details.");
                     return;
                 }
                 const accounts = await provider.getAccounts();
-                showError(`Баланс обновлен для адреса: ${accounts[0].slice(0, 10)}...`);
+                const account = accounts[0];
+                // Симуляция получения случайных балансов
+                const btcBalance = (Math.random() * 0.01).toFixed(4);
+                const yaraBalance = (Math.random() * 1000).toFixed(2);
+                const stakedBalance = (Math.random() * 500).toFixed(2);
+
+                document.getElementById("user-addr").innerText = account.slice(0, 10) + "..." + account.slice(-8);
+                document.getElementById("btc-bal").innerText = btcBalance;
+                document.getElementById("yara-bal").innerText = yaraBalance;
+                document.getElementById("stake-bal").innerText = stakedBalance;
+
+                log(`Wallet details updated.`);
+                alert("Wallet details refreshed.");
             } catch (err) {
-                showError(`Ошибка получения баланса: ${err.message}`);
+                console.error(err);
+                log("Failed to view wallet details: " + err.message);
             }
         }
 
+        // Привязка обработчиков событий к кнопкам
         btnConnect.addEventListener("click", connectWallet);
-        btnMint.addEventListener("click", mintYARA);
-        btnStake.addEventListener("click", stakeYARA);
-        btnView.addEventListener("click", viewWallet);
+        btnMint.addEventListener("click", mintToken);
+        btnApprove.onclick = () => log("Approval transaction requested..."); // Заглушка для Approve
+        btnStake.addEventListener("click", stakeYara);
+        btnUnstake.addEventListener("click", unstakeYara);
+        btnHarvest.addEventListener("click", harvestRewards);
+        btnViewWallet.addEventListener("click", viewWallet);
+
+        // Инициализация лога при загрузке страницы
+        log("🐾 Pill Bank ready - waiting for connection");
     </script>
 </body>
 </html>
