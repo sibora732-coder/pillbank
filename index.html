@@ -1,208 +1,222 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pill Bank</title>
-    <style>
-        /* --- ЦВЕТА ТЕКСТА И ФОНОВ ИЗМЕНИЛИ НА РОЗОВЫЕ --- */
-        body{font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif;background-color:#fce4ec;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;padding:20px}
-        
-        .container{background:#fff;width:100%;max-width:520px;border-radius:24px;padding:30px;box-shadow:0 10px 40px rgba(233,30,99,.15);text-align:center;border:2px solid #f48fb1}
-        
-        .top-title{font-size:18px;font-weight:700;color:#880e4f;margin:0 0 12px 0}
-        
-        .cat-photo{width:180px;height:180px;border-radius:50%;object-fit:cover;border:6px solid #f48fb1;margin:0 auto 18px auto;display:block;box-shadow:0 6px 20px rgba(233,30,99,.2)}
-        
-        h1{color:#c2185b;margin:8px 0 8px;font-size:28px}
-        p.subtitle{color:#ad1457;font-size:15px;margin:0 0 18px}
-        
-        .btn-container{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:0 0 18px}
-        .btn{background:linear-gradient(135deg,#ec407a 0%,#c2185b 100%);color:#fff;border:none;padding:14px 26px;border-radius:14px;font-weight:600;font-size:15px;cursor:pointer;transition:all .2s ease;box-shadow:0 5px 15px rgba(194,24,91,.3)}
-        .btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 20px rgba(194,24,91,.35)}
-        .btn:active{transform:translateY(0)}
-        .btn:disabled{background:#d0d0d0;color:#909090;cursor:not-allowed;transform:none;box-shadow:none}
-        
-        .stats-box{background:#fce4ec;border-radius:18px;padding:18px;margin:0;text-align:left;border:2px dashed #f8bbd0}
-        .stat-row{display:flex;justify-content:space-between;gap:12px;margin:0 0 12px;font-size:14px;color:#555;border-bottom:1px solid #f48fb1;padding-bottom:8px}
-        .stat-row:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
-        .stat-value{font-weight:700;color:#c2185b;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-        
-        .log-area{margin-top:16px;font-size:13px;color:#666;text-align:left;padding:10px 12px;background:#fff0f6;border-radius:10px;border-left:3px solid #ec407a;max-height:160px;overflow-y:auto}
-        .log-line{margin:0 0 6px 0}
-        .log-line:last-child{margin-bottom:0}
-        
-        .network-status{margin:12px 0;font-size:13px;padding:8px;background:#fce4ec;border-radius:8px;}
-        .status-ok{color:#2e7d32}
-        .status-warn{color:#ed6c02}
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pill Bank</title>
+  <style>
+    body{
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #FCE4EC; /* <-- Фон изменен на розовый */
+      display:flex;justify-content:center;align-items:center;
+      min-height:100vh;margin:0;padding:20px;
+    }
+    .container{
+      background:#fff;width:100%;max-width:520px;
+      border-radius:24px;padding:30px;
+      box-shadow:0 10px 40px rgba(230,126,34,.2);
+      text-align:center;border:2px solid #e67e22;
+    }
+    .top-title{
+      font-size:18px;font-weight:700;color:#333;margin:0 0 12px 0;
+    }
+    .cat-photo{
+      width:180px;height:180px;border-radius:50%;
+      object-fit:cover;border:6px solid #e67e22;
+      margin:0 auto 18px auto;display:block;
+      box-shadow:0 6px 20px rgba(0,0,0,.15);
+    }
+    h1{color:#d35400;margin:8px 0 8px;font-size:28px;}
+    p.subtitle{color:#8b5a2b;font-size:15px;margin:0 0 18px;}
+    .btn-container{
+      display:flex;justify-content:center;gap:12px;flex-wrap:wrap;
+      margin:0 0 18px;
+    }
+    .btn{
+      background:linear-gradient(135deg,#e67e22 0%,#d35400 100%);
+      color:#fff;border:none;padding:14px 26px;border-radius:14px;
+      font-weight:600;font-size:15px;cursor:pointer;
+      transition:all .2s ease;box-shadow:0 5px 15px rgba(211,84,0,.3);
+    }
+    .btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(211,84,0,.35);}
+    .btn:disabled{background:#d0d0d0;color:#909090;cursor:not-allowed;transform:none;box-shadow:none;}
+    .stats-box{
+      background:#fff8f0;border-radius:18px;padding:18px;margin:0;
+      text-align:left;border:2px dashed #ffcc80;
+    }
+    .stat-row{
+      display:flex;justify-content:space-between;gap:12px;
+      margin:0 0 12px;font-size:14px;color:#555;
+      border-bottom:1px solid #fae5d3;padding-bottom:8px;
+    }
+    .stat-row:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+    .stat-value{
+      font-weight:700;color:#d35400;max-width:220px;
+      overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    }
+    .log-area{
+      margin-top:16px;font-size:13px;color:#666;text-align:left;
+      padding:10px 12px;background:#fbfbfb;border-radius:10px;
+      border-left:3px solid #e67e22;
+    }
+    .log-line{margin:0 0 6px 0;}
+    .log-line:last-child{margin-bottom:0;}
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="top-title">My Beautiful Cat</div>
+  <div class="container">
+    <div class="top-title">My Beautiful Cat</div>
 
-        <img src="kitti YARA.jpg" alt="My Beautiful Cat" class="cat-photo" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐱</text></svg>'"/>
+    <img
+      src="kitti YARA.jpg"
+      alt="My Beautiful Cat"
+      class="cat-photo"
+      onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐱</text></svg>'"
+    />
 
-        <h1>🐾 Pill Bank</h1>
-        <p class="subtitle">Connect your OP_NET wallet to interact with the contract.</p>
+    <h1>🐾 Pill Bank</h1>
+    <p class="subtitle">Connect your wallet to interact with the contract.</p>
 
-        <!-- Статус сети -->
-        <div class="network-status" id="net-status"></div>
-
-        <div class="btn-container">
-            <button id="btn-connect" class="btn">Connect OP_NET Wallet</button>
-            <button id="btn-mint" class="btn" disabled>Mint (Owner Only)</button>
-            <button id="btn-stake-yara" class="btn" disabled>Stake YARA</button>
-            <button id="btn-view" class="btn" disabled>View Wallet</button>
-        </div>
-
-        <div class="stats-box">
-            <div class="stat-row"><span>Token Contract:</span><span class="stat-value" title="0x403925f98169763bd2dd78b73cdc20421a4b2df7fa3ea171abba278dce2458ca">0x4039...58ca</span></div>
-            <div class="stat-row"><span>Treasury Wallet:</span><span class="stat-value" title="opt1pcx4nk6acad6z43qt0fh5t7lcdt65yp2uh3mcvzc3h0vxkurkhkus8l8q8m">opt1...q8m</span></div>
-            <div class="stat-row"><span>Your Address:</span><span id="user-addr" class="stat-value">Not connected</span></div>
-            <div class="stat-row"><span>YARA Balance:</span><span id="yara-bal" class="stat-value">0</span></div>
-        </div>
-
-        <div class="log-area" id="status-log"></div>
+    <div class="btn-container">
+      <button id="btn-connect" class="btn">Connect Wallet</button>
+      <button id="btn-mint" class="btn" disabled>Mint (Owner Only)</button>
+      <button id="btn-stake-yara" class="btn" disabled>Stake YARA</button>
+      <button id="btn-view" class="btn" disabled>View Wallet</button>
     </div>
 
-    <script>
-        const OWNER_ADDR = "opt1pcx4nk6acad6z43qt0fh5t7lcdt65yp2uh3mcvzc3h0vxkurkhkus8l8q8m";
+    <div class="stats-box">
+      <div class="stat-row">
+        <span>Token Contract:</span>
+        <span class="stat-value" title="0x403925f98169763bd2dd78b73cdc20421a4b2df7fa3ea171abba278dce2458ca">0x4039...58ca</span>
+      </div>
+      <div class="stat-row">
+        <span>Treasury Wallet:</span>
+        <span class="stat-value" title="opt1pcx4nk6acad6z43qt0fh5t7lcdt65yp2uh3mcvzc3h0vxkurkhkus8l8q8m">opt1...q8m</span>
+      </div>
+      <div class="stat-row">
+        <span>Your Address:</span>
+        <span id="user-addr" class="stat-value">Not connected</span>
+      </div>
+      <div class="stat-row">
+        <span>YARA Balance:</span>
+        <span id="yara-bal" class="stat-value">0</span>
+      </div>
+    </div>
+
+    <div class="log-area" id="status-log"></div>
+  </div>
+
+  <script>
+    const OWNER_ADDR = "opt1pcx4nk6acad6z43qt0fh5t7lcdt65yp2uh3mcvzc3h0vxkurkhkus8l8q8m";
+
+    const btnConnect = document.getElementById("btn-connect");
+    const btnMint = document.getElementById("btn-mint");
+    const btnStakeYara = document.getElementById("btn-stake-yara");
+    const btnView = document.getElementById("btn-view");
+
+    const userAddrEl = document.getElementById("user-addr");
+    const yaraBalEl = document.getElementById("yara-bal");
+    const logEl = document.getElementById("status-log");
+
+    let connectedAccount = null;
+
+    function ts() {
+      return new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    }
+
+    function setLog(lines) {
+      logEl.innerHTML = lines.map(l => `<div class="log-line">${l}</div>`).join("");
+    }
+
+    function addLog(line) {
+      logEl.innerHTML = `<div class="log-line">${line}</div>` + logEl.innerHTML;
+    }
+
+    function getProvider() {
+      // Стандартный поиск: сначала UniSat, потом OP_NET
+      return window.unisat || window.opnet || null;
+    }
+
+    function shortAddr(a) {
+      if (!a || typeof a !== "string") return "Not connected";
+      if (a.length <= 16) return a;
+      return a.slice(0, 10) + "..." + a.slice(-8);
+    }
+
+    async function connectWallet() {
+      const provider = getProvider();
+      if (!provider) {
+        setLog([`[${ts()}] Error: Wallet extension not found`, "Waiting for connection..."]);
+        alert("Please install OP_NET Wallet or UniSat!");
+        return;
+      }
+
+      try {
+        addLog(`[${ts()}] Connecting... Please confirm in your wallet.`);
         
-        let isConnected = false;
-        let provider = null;
-        let currentAccount = null;
-
-        const btnConnect = document.getElementById("btn-connect");
-        const btnMint = document.getElementById("btn-mint");
-        const btnStake = document.getElementById("btn-stake-yara");
-        const btnView = document.getElementById("btn-view");
-
-        const userAddrEl = document.getElementById("user-addr");
-        const yaraBalEl = document.getElementById("yara-bal");
-        const logEl = document.getElementById("status-log");
-        const netStatusEl = document.getElementById("net-status");
-
-        function ts(){return new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit",second:"2-digit"});}
-        function log(msg){logEl.innerHTML = `<div class="log-line">[${ts()}] ${msg}</div>` + logEl.innerHTML;}
-        function setStatus(msg, ok){
-            netStatusEl.innerHTML = msg;
-            netStatusEl.className = ok ? "network-status status-ok" : "network-status status-warn";
-        }
-
-        async function connectWallet() {
-            try {
-                if (!window.opnet && !window.OPNet) {
-                    setStatus("⚠️ OP_NET wallet not detected!", false);
-                    log("❌ ERROR: OP_NET wallet provider not found!");
-                    alert("⚠️ OP_NET Wallet Not Found!\n\nPlease install OP_NET wallet extension.");
-                    return;
-                }
-
-                setStatus("✅ OP_NET wallet detected, connecting...", true);
-                provider = window.opnet || window.OPNet;
-
-                log("🔗 Requesting connection to OP_NET...");
-                
-                const accounts = await provider.requestAccounts();
-                
-                if (!accounts || accounts.length === 0) {
-                    throw new Error("User denied access. Check the popup.");
-                }
-
-                currentAccount = accounts[0];
-                
-                if (!currentAccount.startsWith("opt1")) {
-                    setStatus(`⚠️ Wrong network! Address starts with ${currentAccount.slice(0,4)}`, false);
-                    log("❌ ERROR: Connected address does not match OP_NET format!");
-                    alert("⚠️ Wrong Network!\n\nYour wallet address must start with 'opt1' for OP_NET.");
-                    return;
-                }
-
-                setStatus("✅ OP_NET Connected successfully", true);
-                userAddrEl.textContent = currentAccount.slice(0,10) + "..." + currentAccount.slice(-8);
-                isConnected = true;
-
-                btnConnect.disabled = true;
-                btnConnect.textContent = "Connected ✓";
-                
-                btnStake.disabled = false;
-                btnView.disabled = false;
-                
-                if (currentAccount.toLowerCase() === OWNER_ADDR.toLowerCase()) {
-                    btnMint.disabled = false;
-                    log("👑 OWNER MODE: Mint enabled!");
-                } else {
-                    btnMint.disabled = true;
-                    log("Regular user connected.");
-                }
-
-                log(`✅ Connected via OP_NET: ${shortAddr(currentAccount)}`);
-
-            } catch(e) {
-                console.error(e);
-                setStatus("❌ Connection failed", false);
-                log("❌ ERROR: " + e.message);
-                resetButtons(false);
-            }
-        }
-
-        function resetButtons(connect) {
-            btnConnect.disabled = !connect;
-            btnConnect.textContent = connect ? "Connected ✓" : "Connect OP_NET Wallet";
-            btnMint.disabled = true;
-            btnStake.disabled = true;
-            btnView.disabled = true;
-            isConnected = connect;
-            userAddrEl.textContent = connect ? shortAddr(currentAccount) : "Not connected";
-            yaraBalEl.textContent = "0";
-        }
-
-        function shortAddr(addr) {
-            return addr ? addr.slice(0,10) + "..." + addr.slice(-8) : "Not connected";
-        }
-
-        async function mintOnly() {
-            if(!isConnected){alert("Please connect wallet first!");return;}
-            if(currentAccount.toLowerCase() !== OWNER_ADDR.toLowerCase()){
-                alert("This action is for owner only!");
-                return;
-            }
-            let current = parseFloat(yaraBalEl.textContent) || 0;
-            yaraBalEl.textContent = String((current + 10).toFixed(2));
-            log(`Minted +10 YARA tokens`);
-            alert("✅ Mint successful! +10 YARA added.");
-        }
-
-        async function stakeYara() {
-            if(!isConnected){alert("Please connect wallet first!");return;}
-            log("Initiating Stake YARA operation...");
-            alert("Stake YARA simulated");
-        }
-
-        async function viewWallet() {
-            if(!isConnected){alert("Please connect wallet first!");return;}
-            log("Viewing wallet details...");
-            alert("Wallet details viewed");
-        }
-
-        btnConnect.onclick = connectWallet;
-        btnMint.onclick = mintOnly;
-        btnStake.onclick = stakeYara;
-        btnView.onclick = viewWallet;
-
-        log("🐾 Pill Bank ready - waiting for OP_NET wallet...");
+        const accounts = await provider.requestAccounts();
         
-        setTimeout(() => {
-            if(window.opnet || window.OPNet) {
-                setStatus("✅ OP_NET wallet found in browser", true);
-                log("💡 Ready to connect - click 'Connect OP_NET Wallet' button");
-            } else {
-                setStatus("⚠️ OP_NET wallet NOT detected", false);
-                log("⚠️ Please install OP_NET wallet extension first");
-            }
-        }, 500);
-    </script>
+        if (!accounts || accounts.length === 0) {
+            throw new Error("No address returned from wallet");
+        }
+
+        connectedAccount = accounts[0];
+
+        userAddrEl.textContent = shortAddr(connectedAccount);
+        yaraBalEl.textContent = "0";
+
+        btnConnect.textContent = "Connected ✓";
+        btnConnect.disabled = true;
+
+        btnStakeYara.disabled = false;
+        btnView.disabled = false;
+
+        if (connectedAccount && connectedAccount.toLowerCase() === OWNER_ADDR.toLowerCase()) {
+          btnMint.disabled = false;
+        } else {
+          btnMint.disabled = true;
+        }
+
+        setLog([`[${ts()}] Connected successfully!`, ""]);
+      } catch (e) {
+        connectedAccount = null;
+        btnConnect.textContent = "Connect Wallet";
+        btnConnect.disabled = false;
+        
+        let errorMsg = e && e.message ? e.message : "Unknown error or request rejected";
+        setLog([`[${ts()}] Connection failed: ${errorMsg}`, "Waiting for connection..."]);
+      }
+    }
+
+    async function mintOwnerOnly() {
+      if (!connectedAccount) return;
+      if (connectedAccount.toLowerCase() !== OWNER_ADDR.toLowerCase()) {
+        alert("Owner only");
+        return;
+      }
+      const current = Number(yaraBalEl.textContent) || 0;
+      yaraBalEl.textContent = String(current + 10);
+      addLog(`[${ts()}] Mint simulated: +10 YARA`);
+    }
+
+    async function stakeYara() {
+      if (!connectedAccount) return;
+      addLog(`[${ts()}] Stake simulated`);
+      alert("Stake YARA simulated");
+    }
+
+    async function viewWallet() {
+      if (!connectedAccount) return;
+      addLog(`[${ts()}] View Wallet clicked`);
+      alert("Wallet viewed (UI only)");
+    }
+
+    btnConnect.addEventListener("click", connectWallet);
+    btnMint.addEventListener("click", mintOwnerOnly);
+    btnStakeYara.addEventListener("click", stakeYara);
+    btnView.addEventListener("click", viewWallet);
+
+    setLog([`[${ts()}] 🐾 Pill Bank ready`, "Waiting for connection..."]);
+  </script>
 </body>
 </html>
